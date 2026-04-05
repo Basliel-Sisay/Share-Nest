@@ -2,19 +2,19 @@
 
 <h2>Project Overview</h2>
 
-<h3>Description</h3>
+<h2>Description</h2>
 
 An app to help communities share and manage resources efficiently such as tools, books, skills and equipment
 
 It Reduces duplication, promotes sustainability and it's useful for campuses
 
-<h3>Target users</h3>
+<h2>Target users</h2>
 
 Students, neighborhood members and small organizations
 
-<h3>Business Features and CRUD Operations</h3>
+<h2>Business Features and CRUD Operations</h2>
 
-<h4> 1. Resource management</h4>
+<h3> 1. Resource management</h3>
 
 <strong>Create</strong>: Users can add new resources by providing details such as resource name, description, category (tools, books, equipment or skills) and availability status 
 
@@ -24,7 +24,7 @@ Students, neighborhood members and small organizations
 
 <strong>Delete</strong>: Users can remove resources they own when they are no longer available for sharing
 
-<h4>  2. Loan management</h4>
+<h3>  2. Loan management</h3>
 
 <strong>Create</strong>: Users can request to borrow a resource by creating a loan record with expected pickup and return dates
 
@@ -34,7 +34,7 @@ Students, neighborhood members and small organizations
 
 <strong>Delete</strong>: Users can cancel pending loan requests and owners can reject unwanted requests
 
-<h4>   3. Reservation management</h4>
+<h3>   3. Reservation management</h3>
 
 <strong>Create</strong>: Users can create a reservation for a resource by selecting a future date and time window with conflict checking mechanism  
 
@@ -44,10 +44,11 @@ Students, neighborhood members and small organizations
 
 <strong>Delete</strong>: Users or owners can cancel reservations before the scheduled time
 
+<h2> Team Members </h2>
 
 <table>
         <tr>
-            <th>Group Members</th>
+            <th>Full Name</th>
             <th>ID</th>
         </tr>
         <tr>
