@@ -1,20 +1,39 @@
-<h1>ShareNest</h1>
-
-<h2>Project Overview</h2>
+<h1>ShareNest: Community Resource Sharing Mobile App</h1>
 
 <h2>Description</h2>
 
-An app to help communities share and manage resources efficiently such as tools, books, skills and equipment
-
-It Reduces duplication, promotes sustainability and it's useful for campuses
+<p>An app designed to help communities share and manage resources efficiently such as tools, books, skills and equipment.
+It reduces duplication, promotes sustainability and useful for university campuses</p>
 
 <h2>Target users</h2>
 
-Students, neighborhood members and small organizations
+<ul>
+  <li>Students</li>
+  <li>Neighborhood members</li>
+  <li>Small organizations</li>
+</ul>
 
-<h2>Business Features and CRUD Operations</h2>
+<h2> 1. Authentication and Authorization</h2>
 
-<h3> 1. Resource management</h3>
+<h3><ins><strong>Features</strong></ins></h3>
+
+<strong>User Signup</strong>: New users can register by providing their name, email, and password
+
+<strong>User Login</strong>: Registered users can log in securely to access the application
+
+<strong>Logout</strong>: Users can securely log out clearing their session 
+
+<strong>Delete Account</strong>: Users can permanently delete their account and associated data
+
+<h3><ins><strong>Role-Based Access Control</strong></ins></h3>
+
+<strong>Regular Users</strong>: Can create and manage their own resources, submit loan requests and make reservations 
+  
+<strong>Resource Owners</strong>: Have additional permissions to approve or reject loan requests and reservations for the resources they own
+
+<h2>2. Business Features and CRUD Operations</h2>
+
+<h3>A. <ins> Resource management </ins></h3>
 
 <strong>Create</strong>: Users can add new resources by providing details such as resource name, description, category (tools, books, equipment or skills) and availability status 
 
@@ -24,7 +43,7 @@ Students, neighborhood members and small organizations
 
 <strong>Delete</strong>: Users can remove resources they own when they are no longer available for sharing
 
-<h3>  2. Loan management</h3>
+<h3>B. <ins> Loan management</ins></h3>
 
 <strong>Create</strong>: Users can request to borrow a resource by creating a loan record with expected pickup and return dates
 
@@ -34,13 +53,13 @@ Students, neighborhood members and small organizations
 
 <strong>Delete</strong>: Users can cancel pending loan requests and owners can reject unwanted requests
 
-<h3>   3. Reservation management</h3>
+<h3> C. <ins>  Reservation management</ins></h3>
 
 <strong>Create</strong>: Users can create a reservation for a resource by selecting a future date and time window with conflict checking mechanism  
 
 <strong>Read</strong>: Users can view their upcoming and past reservations and Resource owners can see all reservations made for their items
 
-<strong>Update</strong>: Users can modify the reservation dates if the new time slot is still available qne resource owners can approve, reject, or adjust reservations
+<strong>Update</strong>: Users can modify the reservation dates if the new time slot is still available and resource owners can approve, reject or adjust reservations
 
 <strong>Delete</strong>: Users or owners can cancel reservations before the scheduled time
 
