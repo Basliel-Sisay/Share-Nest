@@ -28,22 +28,10 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-        body: SafeArea(
-  child: ListView(
-    padding: const EdgeInsets.all(20),
-    children: [
-      Container(
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top:18,
-          bottom: 18,
-          ),
-        decoration: BoxDecoration(
-          color: Colors.green,
-         // borderRadius: BorderRadius.circular(28),
-        ),
-        child: Row(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        elevation: 0,
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
@@ -56,10 +44,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 2),
                   Container(
                     padding: const EdgeInsets.all(6),
-                    child: const Icon(Icons.eco, color: Colors.black, size: 20),
+                    child: const Icon(Icons.eco, color: Colors.black, size: 26),
                   ),
               ],
             ),
@@ -87,10 +75,11 @@ class _SignupScreenState extends State<SignupScreen> {
           ],
         ),
       ),
-
-      const SizedBox(height: 24),
-
-      // Signup card
+        body: SafeArea(
+  child: ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+     const SizedBox(height: 24),
       Container(
         width: double.infinity,
         padding: const EdgeInsets.only(
@@ -130,7 +119,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
             const SizedBox(height: 24),
-
             // Form
             Form(
               key: _formKey,
