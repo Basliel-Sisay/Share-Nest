@@ -8,15 +8,15 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool _acceptedTerms = false;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final  _nameController = TextEditingController();
+  final  _emailController = TextEditingController();
+  final  _passwordController = TextEditingController();
+  final  _confirmPasswordController = TextEditingController();
 
   @override
-  void dispose() {
+  void dispose(){
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -28,244 +28,305 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(255, 255, 255, 0.18),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.eco, color: Colors.white, size: 20),
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'NEST',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                    const Text(
-                      'ShareNest',
-                      style: TextStyle(
-                        color: Color.fromARGB(179, 241, 241, 241),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(255, 255, 255, 0.18),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.help_outline, color: Colors.white, size: 18),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 22),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(31, 0, 0, 0),
-                      blurRadius: 24,
-                      offset: const Offset(0, 12),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        fontSize: 28,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Be part of a community where sharing and growing together feels effortless',
-                      style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
-                    ),
-                    const SizedBox(height: 24),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          _buildInputField(
-                            label: 'Full Name',
-                            hintText: 'Tinsae Getaneh',
-                            icon: Icons.person_outline,
-                            controller: _nameController,
-                            validator: (value) => value == null || value.isEmpty ? 'Enter your full name' : null,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildInputField(
-                            label: 'Email Address',
-                            hintText: 'Tinsae21@gmail.com',
-                            icon: Icons.email_outlined,
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Enter your email address';
-                              }
-                              if (!value.contains('@')) {
-                                return 'Enter a valid email';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildInputField(
-                            label: 'Password',
-                            hintText: '••••••••',
-                            icon: Icons.lock_outline,
-                            controller: _passwordController,
-                            obscureText: true,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Enter a password';
-                              }
-                              if (value.length < 8) {
-                                return 'Use at least 8 characters';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildInputField(
-                            label: 'Confirm Password',
-                            hintText: '••••••••',
-                            icon: Icons.lock_outline,
-                            controller: _confirmPasswordController,
-                            obscureText: true,
-                            validator: (value) {
-                              if (value != _passwordController.text) {
-                                return 'Passwords do not match';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 22),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 245, 245, 245),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: CheckboxListTile(
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: _acceptedTerms,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _acceptedTerms = value ?? false;
-                                });
-                              },
-                              title: const Text(
-                                'I agree to the Terms of Service and Privacy Policy of the ShareNest Commons',
-                                style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
-                              ),
-                              activeColor: Colors.green,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 56,
-                            child: ElevatedButton(
-                              onPressed: _acceptedTerms
-                                  ? () {
-                                      if (_formKey.currentState?.validate() ?? false) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Account created successfully!')),
-                                        );
-                                      }
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                                backgroundColor: Colors.green,
-                              ),
-                              child: const Text(
-                                'Create Account',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+        body: SafeArea(
+  child: ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      Container(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top:18,
+          bottom: 18,
           ),
+        decoration: BoxDecoration(
+          color: Colors.green,
+         // borderRadius: BorderRadius.circular(28),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              child: const Icon(Icons.eco, color: Colors.black, size: 20),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'NEST',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+            const Text(
+              'ShareNest',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: const Icon(
+                Icons.help_outline, 
+                color: Colors.white, 
+                size: 18
+                ),
+            ),
+          ],
         ),
       ),
-    );
+
+      const SizedBox(height: 24),
+
+      // Signup card
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(
+          top: 28,
+          bottom: 28, 
+          left: 22,
+          right:22,
+          ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(31, 0, 0, 0),
+              blurRadius: 24,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: const Text(
+                'Create Account',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: const Text(
+                'Be part of a community where sharing and growing together feels effortless',
+                style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 126, 123, 123), height: 1.5),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Form
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _inputField(
+                    label: 'Full Name',
+                    hintText: 'Enter your full name',
+                    icon: Icons.person_outline,
+                    controller: _nameController,
+                    validator: (value){
+                      if(value == null || value.isEmpty){
+                        return 'Please enter your full name';
+                      }
+                      return null;
+                    }
+                  ),
+                  const SizedBox(height: 16),
+                  _inputField(
+                    label: 'Email Address',
+                    hintText: 'Enter your email',
+                    icon: Icons.email_outlined,
+                    controller: _emailController,
+                    validator: (value){
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email address';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  _inputField(
+                    label: 'Password',
+                    hintText: '********',
+                    icon: Icons.lock_outline,
+                    controller: _passwordController,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _inputField(
+                    label: 'Confirm Password',
+                    hintText: '********',
+                    icon: Icons.lock_outline,
+                    controller: _confirmPasswordController,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value != _passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 22),
+
+                  // Terms checkbox
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 242, 243, 245),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: CheckboxListTile(
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _acceptedTerms,
+                      onChanged: (bool? value){
+                        setState(() {
+                          if(value == true){
+                            _acceptedTerms = true;
+                          } else {
+                            _acceptedTerms = false; 
+                          }
+                        });
+                      },
+                      title: RichText(text: TextSpan(children: [
+                        const TextSpan(
+                          text: 'I agree to the ',
+                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                        ),
+                        TextSpan(
+                          text: 'Terms of Service',
+                          style: TextStyle(fontSize: 13, color: Colors.green),
+                        ),
+                        const TextSpan(
+                          text: ' and ',
+                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                        ),
+                        TextSpan(
+                          text: 'Privacy Policy',
+                          style: TextStyle(fontSize: 13, color: Colors.green), 
+                        ),
+                      ],)),
+                      activeColor: Colors.green,
+                      contentPadding:
+                          const EdgeInsets.only(
+                            left: 15,
+                            right: 15,
+                            top: 8,
+                            bottom: 8,
+                            ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Submit button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed:(){
+                        if(_formKey.currentState!= null){
+                          if(_formKey.currentState!.validate()){
+                            if(_acceptedTerms){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Account created successfully')),
+                              );
+                        }
+                        else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please accept the terms to proceed')),
+                          );
+                        }
+                          }
+                        else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please fill in all fields correctly')),
+                          );
+                        }
+                      } 
+                    },   
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: const Color.fromARGB(255, 61, 131, 63),
+                      ),
+                      child: const Text(
+                        'Create Account',
+                        style:
+                            TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+  );
   }
 
-  Widget _buildInputField({
+  Widget _inputField({
     required String label,
-    required String hintText,
+    String? hintText,
     required IconData icon,
     required TextEditingController controller,
-    TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
     String? Function(String?)? validator,
-  }) {
+  }){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            fontSize: 15, 
+            color: Colors.grey, 
+            fontWeight: FontWeight.bold
+            ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         TextFormField(
           controller: controller,
-          keyboardType: keyboardType,
           obscureText: obscureText,
           validator: validator,
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color.fromARGB(255, 245, 245, 245),
+            fillColor: const Color.fromARGB(255, 245, 242, 240),
             hintText: hintText,
             prefixIcon: Icon(icon, color: Colors.green),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: const Color.fromARGB(255, 224, 224, 224)),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(20),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.green),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
         ),
