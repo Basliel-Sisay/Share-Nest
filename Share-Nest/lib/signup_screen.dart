@@ -44,39 +44,45 @@ class _SignupScreenState extends State<SignupScreen> {
          // borderRadius: BorderRadius.circular(28),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              child: const Icon(Icons.eco, color: Colors.black, size: 20),
+            Row(
+              children: [
+                const Text(
+                    'NEST_',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    child: const Icon(Icons.eco, color: Colors.black, size: 20),
+                  ),
+              ],
             ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Text(
-                'NEST',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+            Row(
+              children: [
+                const Text(
+                  'ShareNest',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ),
-            const Text(
-              'ShareNest',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: const Icon(
-                Icons.help_outline, 
-                color: Colors.white, 
-                size: 18
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(
+                    Icons.help_outline, 
+                    color: Colors.white, 
+                    size: 18
+                  ),
                 ),
+              ],
             ),
           ],
         ),
@@ -270,7 +276,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: const Color.fromARGB(255, 61, 131, 63),
+                        backgroundColor: const Color.fromARGB(200, 2, 150, 16),
                       ),
                       child: const Text(
                         'Create Account',
