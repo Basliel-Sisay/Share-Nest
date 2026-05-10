@@ -4,49 +4,29 @@ import '../../features/resource/presentation/screens/browse_resources_screen.dar
 import '../../features/resource/presentation/screens/my_loan_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_form_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_confirmation_screen.dart';
+import '../../features/auth/presentation/screens/landing_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/item/presentation/screens/item_detail_screen.dart';
 
 class AppRouter {
-  const AppRouter._();
-
-  // Route paths
-  static const String homePath = '/';
-  static const String historyPath = '/history';
-  static const String itemPath = '/item';
-
-  // Route names
-  static const String homeRoute = 'home';
-  static const String historyRoute = 'history';
-  static const String itemDetailRoute = 'item-detail';
-
   static final GoRouter router = GoRouter(
-    initialLocation: homePath,
+    initialLocation: '/landing',
     routes: [
       GoRoute(
-        path: homePath,
-        name: homeRoute,
-        builder: (context, state) => const HomeScreen(),
+        path: '/landing',
+        builder: (context, state) => const LandingScreen(),
       ),
       GoRoute(
-        path: historyPath,
-        name: historyRoute,
-        builder: (context, state) => const HistoryScreen(),
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        path: itemPath,
-        name: itemDetailRoute,
-        builder: (context, state) => const ItemDetailScreen(),
+        path: '/signup',
+        builder: (context, state) => const SignupScreen(),
       ),
-    ],
-  );
-}
-
-class AppRouter {
-  static final GoRouter router = GoRouter(
-    initialLocation: '/',
-    routes: [
       GoRoute(
         path: '/',
         builder: (context, state) => const BrowseResourcesScreen(),
@@ -66,6 +46,18 @@ class AppRouter {
       GoRoute(
         path: '/reservation-confirmation',
         builder: (context, state) => const ReservationConfirmationScreen(),
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/history',
+        builder: (context, state) => const HistoryScreen(),
+      ),
+      GoRoute(
+        path: '/item',
+        builder: (context, state) => const ItemDetailScreen(),
       ),
     ],
   );
