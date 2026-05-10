@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'core/routing/app_router.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
   runApp(const ShareNestApp());
@@ -14,13 +14,8 @@ class ShareNestApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'ShareNest',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF11823B)),
-        scaffoldBackgroundColor: const Color(0xFFF1F3F8),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       routerConfig: AppRouter.router,
     );
   }
 }
-

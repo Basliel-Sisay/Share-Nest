@@ -4,11 +4,26 @@ import '../../features/resource/presentation/screens/browse_resources_screen.dar
 import '../../features/resource/presentation/screens/my_loan_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_form_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_confirmation_screen.dart';
+import '../../features/auth/presentation/screens/landing_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/signup_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/landing',
     routes: [
+      GoRoute(
+        path: '/landing',
+        builder: (context, state) => const LandingScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => const SignupScreen(),
+      ),
       GoRoute(
         path: '/',
         builder: (context, state) => const BrowseResourcesScreen(),
