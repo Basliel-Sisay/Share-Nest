@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'delete_account_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -18,7 +18,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // HEADER
           const Text(
             "Account Preferences",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -33,7 +32,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 20),
 
-          // PROFILE SETTINGS
           _SimpleCard(
             icon: Icons.person,
             title: "Profile Settings",
@@ -43,7 +41,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 12),
 
-          // NOTIFICATIONS
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -72,7 +69,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 12),
 
-          // PRIVACY
           _SimpleCard(
             icon: Icons.lock,
             title: "Privacy & Security",
@@ -82,7 +78,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 12),
 
-          // LANGUAGE
           _SimpleCard(
             icon: Icons.language,
             title: "Language",
@@ -92,7 +87,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 30),
 
-          // DANGER ZONE TITLE
           const Text(
             "Danger Zone",
             style: TextStyle(
@@ -104,17 +98,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 10),
 
-          // DELETE ACCOUNT
           _SimpleCard(
             icon: Icons.delete,
             title: "Delete Account",
             subtitle: "Permanently remove your account",
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const DeleteAccountScreen()),
-              );
-            },
+            onTap: () => context.push('/delete-account'),
           ),
         ],
       ),

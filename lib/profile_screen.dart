@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'settings_screen.dart';
-import 'delete_account_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -73,42 +72,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           const SizedBox(height: 30),
 
-          _MenuItem(
+          _menuItem(
             icon: Icons.settings,
             title: "Settings",
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              );
-            },
+            onTap: () => context.push('/settings'),
           ),
 
-          _MenuItem(
+          _menuItem(
             icon: Icons.history,
             title: "Sharing History",
-            onTap: () {
-              // placeholder for now
-            },
+            onTap: () {},
           ),
 
-          _MenuItem(
-            icon: Icons.help,
-            title: "Help Center",
-            onTap: () {
-              // placeholder for now
-            },
-          ),
+          _menuItem(icon: Icons.help, title: "Help Center", onTap: () {}),
 
           const SizedBox(height: 20),
 
           TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const DeleteAccountScreen()),
-              );
-            },
+            onPressed: () => context.push('/delete-account'),
             child: const Text(
               "Delete Account",
               style: TextStyle(color: Colors.red),
@@ -119,8 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ignore: non_constant_identifier_names
-  Widget _MenuItem({
+  Widget _menuItem({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
