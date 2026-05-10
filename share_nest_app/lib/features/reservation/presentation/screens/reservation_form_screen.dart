@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-
+// Builds the reservation form UI for selecting pickup and return schedule
 class ReservationFormScreen extends StatelessWidget {
   const ReservationFormScreen({super.key});
 
