@@ -13,7 +13,7 @@ class BrowseResourcesScreen extends StatelessWidget {
         title: const Text('ShareNest'),
         leading: const Padding(
           padding: EdgeInsets.all(8.0),
-          child: Icon(Icons.eco), // Placeholder for NEST logo
+          child: Icon(Icons.eco),
         ),
         actions: [
           IconButton(
@@ -44,7 +44,6 @@ class BrowseResourcesScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // Search Bar
                   TextField(
                     decoration: InputDecoration(
                       hintText: 'What do you need today?',
@@ -58,7 +57,6 @@ class BrowseResourcesScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Categories
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -72,7 +70,6 @@ class BrowseResourcesScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // Resource Cards
                   const ResourceCard(
                     title: 'Woodworking Kit',
                     ownerName: 'Abrham Tesfaye',

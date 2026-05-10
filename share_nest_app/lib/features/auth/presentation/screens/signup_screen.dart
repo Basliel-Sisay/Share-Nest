@@ -119,7 +119,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // Form
             Form(
               key: _formKey,
               child: Column(
@@ -186,7 +185,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 22),
 
-                  // Terms checkbox
                   Container(
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 242, 243, 245),
@@ -235,7 +233,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Submit button
                   SizedBox(
                     width: double.infinity,
                     height: 56,

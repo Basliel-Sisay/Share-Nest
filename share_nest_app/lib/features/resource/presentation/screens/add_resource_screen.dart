@@ -56,7 +56,6 @@ class AddResourceScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Image Upload Area
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 40),
@@ -90,7 +89,6 @@ class AddResourceScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   
-                  // Form Fields
                   _buildLabel('RESOURCE NAME'),
                   _buildTextField(hint: 'e.g., Power Drill'),
                   
@@ -110,7 +108,6 @@ class AddResourceScreen extends StatelessWidget {
                   ),
                   
                   const SizedBox(height: 24),
-                  // Available for Loan Toggle
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -204,4 +201,4 @@ class AddResourceScreen extends StatelessWidget {
   }
 }
 
-const FontWeight principal = FontWeight.bold; // fix for typo in styling
+const FontWeight principal = FontWeight.bold;

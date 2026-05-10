@@ -37,7 +37,6 @@ class ResourceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Placeholder for Image
           Stack(
             children: [
               Container(

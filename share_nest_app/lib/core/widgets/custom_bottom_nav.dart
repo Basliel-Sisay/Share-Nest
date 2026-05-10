@@ -31,35 +31,33 @@ class CustomBottomNav extends StatelessWidget {
                 label: 'HOME',
                 isActive: currentIndex == 0,
                 onTap: () {
-                  // Currently no home screen in requirements, fallback or do nothing
                 },
-              ),
-              _buildNavItem(
+                ),
+                _buildNavItem(
                 icon: Icons.search,
                 label: 'BROWSE',
                 isActive: currentIndex == 1,
                 onTap: () {
                   if (currentIndex != 1) context.go('/');
                 },
-              ),
-              _buildAddButton(context),
-              _buildNavItem(
+                ),
+                _buildAddButton(context),
+                _buildNavItem(
                 icon: Icons.handshake_outlined,
                 label: 'LOANS',
                 isActive: currentIndex == 3,
                 onTap: () {
                   if (currentIndex != 3) context.go('/loans');
                 },
-              ),
-              _buildNavItem(
+                ),
+                _buildNavItem(
                 icon: Icons.person_outline,
                 label: 'PROFILE',
                 isActive: currentIndex == 4,
                 onTap: () {
-                  // No profile screen in requirements
+                  if (currentIndex != 4) context.go('/profile');
                 },
-              ),
-            ],
+                ),
           ),
         ),
       ),

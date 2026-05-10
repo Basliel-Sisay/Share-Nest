@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-// Displays reservation confirmation popup UI
+
 class ReservationConfirmationScreen extends StatelessWidget {
   const ReservationConfirmationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-     // Main modal container centered on screen
     return Scaffold(
-      backgroundColor: Colors.black54, // Modal overlay effect
+      backgroundColor: Colors.black54,
       body: Center(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 24),

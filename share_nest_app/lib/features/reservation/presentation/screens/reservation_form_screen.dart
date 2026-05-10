@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-// Builds the reservation form UI for selecting pickup and return schedule
+
 class ReservationFormScreen extends StatelessWidget {
   const ReservationFormScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black54, // To give the modal overlay effect
+      backgroundColor: Colors.black54,
       body: Center(
         child: SingleChildScrollView(
           child: Container(

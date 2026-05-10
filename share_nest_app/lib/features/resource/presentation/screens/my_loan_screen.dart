@@ -57,7 +57,6 @@ class MyLoanScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // Tab Buttons (Loans / Reservations)
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.cardBlue,
@@ -99,12 +98,11 @@ class MyLoanScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   
-                  // Active Loans
                   const LoanItemCard(
                     title: 'DeWalt Power Drill',
                     ownerName: 'Sarah Yabets',
                     statusText: 'DUE IN 2 DAYS',
-                    statusColor: Colors.green, // Adjust to exact green
+                    statusColor: Colors.green,
                     statusTextColor: Colors.white,
                     dateText: 'Return by June 24, 6:00 PM',
                     isUpcoming: false,
@@ -132,7 +130,6 @@ class MyLoanScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Upcoming Reservation Card
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
