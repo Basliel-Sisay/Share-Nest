@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primaryGreen = Color(0xFF1E8449); // Adjust based on Figma
-  static const Color darkGreen = Color(0xFF115C30);
-  static const Color lightGreen = Color(0xFFD4EEDC); // For ADD button
-  static const Color background = Color(0xFFF8FAFC);
-  static const Color cardBlue = Color(0xFFDDE8FC); // For textfields/buttons background
-  static const Color textDark = Color(0xFF0D1B2A);
-  static const Color textGrey = Color(0xFF64748B);
+  static const Color primaryGreen = Color.fromARGB(255, 30, 132, 73); // Adjust based on Figma
+  static const Color darkGreen = Color.fromARGB(255, 17, 92, 48);
+  static const Color lightGreen = Color.fromARGB(255, 212, 238, 220); // For ADD button
+  static const Color background = Color.fromARGB(255, 248, 250, 252);
+  static const Color cardBlue = Color.fromARGB(255, 221, 232, 252); // For textfields/buttons background
+  static const Color textDark = Color.fromARGB(255, 13, 27, 42);
+  static const Color textGrey = Color.fromARGB(255, 100, 116, 139);
   static const Color surface = Colors.white;
 }
