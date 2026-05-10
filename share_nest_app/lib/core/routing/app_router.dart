@@ -10,6 +10,10 @@ import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/item/presentation/screens/item_detail_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/settings_screen.dart';
+import '../../features/profile/presentation/screens/delete_account_screen.dart';
+import '../../features/profile/presentation/screens/account_deleted_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -58,6 +62,22 @@ class AppRouter {
       GoRoute(
         path: '/item',
         builder: (context, state) => const ItemDetailScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/delete-account',
+        builder: (context, state) => const DeleteAccountScreen(),
+      ),
+      GoRoute(
+        path: '/account-deleted',
+        builder: (context, state) => const AccountDeletedScreen(),
       ),
     ],
   );
