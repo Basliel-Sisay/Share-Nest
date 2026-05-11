@@ -19,8 +19,8 @@ class OwnerInfoTile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 13,
-          backgroundColor: const Color(0xFFE6EAEE),
-          child: Icon(icon, size: 14, color: const Color(0xFF576372)),
+          backgroundColor: const Color.fromARGB(255, 230, 234, 238),
+          child: Icon(icon, size: 14, color: const Color.fromARGB(255, 87, 99, 114)),
         ),
         const SizedBox(width: 10),
         Column(
@@ -30,8 +30,8 @@ class OwnerInfoTile extends StatelessWidget {
               title.toUpperCase(),
               style: const TextStyle(
                 fontSize: 10,
-                color: Color(0xFF788392),
-                fontWeight: FontWeight.w700,
+                color: Color.fromARGB(255, 120, 131, 146),
+                fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 2),
@@ -39,8 +39,8 @@ class OwnerInfoTile extends StatelessWidget {
               value,
               style: const TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1E2C3A),
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 30, 44, 58),
               ),
             ),
           ],

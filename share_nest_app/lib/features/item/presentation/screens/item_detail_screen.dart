@@ -32,7 +32,7 @@ class ItemDetailScreen extends StatelessWidget {
                 height: 220,
                 margin: const EdgeInsets.symmetric(horizontal: 22),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF101C2B),
+                  color: const Color.fromARGB(255, 16, 28, 43),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: ClipRRect(
@@ -53,8 +53,8 @@ class ItemDetailScreen extends StatelessWidget {
                       'Power Drill',
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF162435),
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 22, 36, 53),
                       ),
                     ),
                     const SizedBox(height: 18),
@@ -73,19 +73,19 @@ class ItemDetailScreen extends StatelessWidget {
                     const Text(
                       'Description',
                       style:
-                          TextStyle(fontWeight: FontWeight.w800, fontSize: 17),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'Compact Drill, built for everyday wall drilling and light home projects, this product handles tasks smoothly without strain. It is solid condition, delivering reliable power and steady performance whenever you need it.',
-                      style: TextStyle(color: Color(0xFF516173), height: 1.45),
+                      style: TextStyle(color: Color.fromARGB(255, 81, 97, 115), height: 1.45),
                     ),
                     const SizedBox(height: 16),
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDFE9F8),
+                        color: const Color.fromARGB(255, 223, 233, 248),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Column(
@@ -93,7 +93,7 @@ class ItemDetailScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Item Condition & Usage',
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 8),
                           Text('• Includes 2 rechargeable batteries'),
@@ -110,7 +110,7 @@ class ItemDetailScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDCE8FA),
+                              color: const Color.fromARGB(255, 220, 232, 250),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: const Column(
@@ -119,7 +119,7 @@ class ItemDetailScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 10)),
                                 Text('14',
                                     style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
@@ -129,7 +129,7 @@ class ItemDetailScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDCE8FA),
+                              color: const Color.fromARGB(255, 220, 232, 250),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: const Column(
@@ -138,7 +138,7 @@ class ItemDetailScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 10)),
                                 Text('100%',
                                     style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
@@ -151,7 +151,7 @@ class ItemDetailScreen extends StatelessWidget {
                         Expanded(
                           child: FilledButton(
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF1982D1),
+                              backgroundColor: const Color.fromARGB(255, 25, 130, 209),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(26),
                               ),
@@ -164,7 +164,7 @@ class ItemDetailScreen extends StatelessWidget {
                         Expanded(
                           child: FilledButton(
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF17A643),
+                              backgroundColor: const Color.fromARGB(255, 23, 166, 67),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(26),
                               ),

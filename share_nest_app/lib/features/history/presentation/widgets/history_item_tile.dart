@@ -48,8 +48,8 @@ class HistoryItemTile extends StatelessWidget {
                         itemName,
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF162434),
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 22, 36, 52),
                         ),
                       ),
                     ),
@@ -64,8 +64,8 @@ class HistoryItemTile extends StatelessWidget {
                         stateLabel,
                         style: const TextStyle(
                           fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF143320),
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 20, 51, 32),
                         ),
                       ),
                     ),
@@ -76,11 +76,11 @@ class HistoryItemTile extends StatelessWidget {
                   children: [
                     const CircleAvatar(
                       radius: 9,
-                      backgroundColor: Color(0xFFE4EAF1),
+                      backgroundColor: Color.fromARGB(255, 228, 234, 241),
                       child: Icon(
                         Icons.person,
                         size: 11,
-                        color: Color(0xFF546273),
+                        color: Color.fromARGB(255, 84, 98, 115),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -88,7 +88,7 @@ class HistoryItemTile extends StatelessWidget {
                       'Lent to $borrower',
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Color(0xFF4E5967),
+                        color: Color.fromARGB(255, 78, 89, 103),
                       ),
                     ),
                   ],
@@ -98,14 +98,14 @@ class HistoryItemTile extends StatelessWidget {
                   period,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF5B6774),
-                    fontWeight: FontWeight.w600,
+                    color: Color.fromARGB(255, 91, 103, 116),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: Color(0xFF117D37)),
+          const Icon(Icons.chevron_right, color: Color.fromARGB(255, 17, 125, 55)),
         ],
       ),
     );

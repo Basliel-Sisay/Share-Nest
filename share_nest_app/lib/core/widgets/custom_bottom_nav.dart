@@ -58,6 +58,7 @@ class CustomBottomNav extends StatelessWidget {
                   if (currentIndex != 4) context.go('/profile');
                 },
                 ),
+            ],
           ),
         ),
       ),

@@ -12,14 +12,14 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF157D3A),
+        foregroundColor: const Color.fromARGB(255, 21, 125, 58),
         leading: IconButton(
           onPressed: () => context.go('/home'),
           icon: const Icon(Icons.arrow_back),
         ),
         title: const Text(
           'Sharing History',
-          style: TextStyle(fontWeight: FontWeight.w700),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: const [
           Padding(
@@ -27,7 +27,7 @@ class HistoryScreen extends StatelessWidget {
             child: Center(
               child: Text(
                 'ShareNest',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),
@@ -43,8 +43,8 @@ class HistoryScreen extends StatelessWidget {
                 'Your Impact',
                 style: TextStyle(
                   fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF162434),
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 22, 36, 52),
                 ),
               ),
               SizedBox(height: 18),
@@ -52,8 +52,8 @@ class HistoryScreen extends StatelessWidget {
                 'RECENT CHANGES',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Color(0xFF49535F),
-                  fontWeight: FontWeight.w700,
+                  color: Color.fromARGB(255, 73, 83, 95),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 10),
@@ -62,7 +62,7 @@ class HistoryScreen extends StatelessWidget {
                 borrower: 'Elias Debalke',
                 period: 'APR 12 - APR 14, 2026',
                 stateLabel: 'RETURNED',
-                stateColor: Color(0xFF50BE62),
+                stateColor: Color.fromARGB(255, 80, 190, 98),
                 imagePath: 'assets/images/drill.png',
               ),
               HistoryItemTile(
@@ -70,7 +70,7 @@ class HistoryScreen extends StatelessWidget {
                 borrower: 'Haymanot Samson',
                 period: 'DUE BACK TOMORROW',
                 stateLabel: 'IN USE',
-                stateColor: Color(0xFFB8D9F7),
+                stateColor: Color.fromARGB(255, 184, 217, 247),
                 imagePath: 'assets/images/ladder.png',
               ),
               HistoryItemTile(
@@ -78,7 +78,7 @@ class HistoryScreen extends StatelessWidget {
                 borrower: 'Kirubel Awoke',
                 period: 'MAR 24 - MAR 28, 2026',
                 stateLabel: 'ARCHIVED',
-                stateColor: Color(0xFFD4E0EF),
+                stateColor: Color.fromARGB(255, 212, 224, 239),
                 imagePath: 'assets/images/tent.png',
               ),
               HistoryItemTile(
@@ -86,7 +86,7 @@ class HistoryScreen extends StatelessWidget {
                 borrower: 'Elias Debalke',
                 period: 'FEB 15 - FEB 16, 2023',
                 stateLabel: 'RETURNED',
-                stateColor: Color(0xFF50BE62),
+                stateColor: Color.fromARGB(255, 80, 190, 98),
                 imagePath: 'assets/images/juice_extractor.png',
               ),
             ],
@@ -98,7 +98,7 @@ class HistoryScreen extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 10),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFCECECE),
+          color: const Color.fromARGB(255, 206, 206, 206),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -148,18 +148,18 @@ class _HistoryNavItem extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFBCE8C8),
+          color: const Color.fromARGB(255, 188, 232, 200),
           borderRadius: BorderRadius.circular(999),
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF1D7940), size: 20),
+            Icon(icon, color: const Color.fromARGB(255, 29, 121, 64), size: 20),
             const SizedBox(width: 6),
             Text(
               label,
               style: const TextStyle(
-                color: Color(0xFF1D7940),
-                fontWeight: FontWeight.w700,
+                color: Color.fromARGB(255, 29, 121, 64),
+                fontWeight: FontWeight.bold,
                 fontSize: 11,
               ),
             ),
@@ -171,13 +171,13 @@ class _HistoryNavItem extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, color: const Color(0xFF627282), size: 20),
+        Icon(icon, color: const Color.fromARGB(255, 98, 114, 130), size: 20),
         const SizedBox(height: 4),
         Text(
           label,
           style: const TextStyle(
-            color: Color(0xFF627282),
-            fontWeight: FontWeight.w700,
+            color: Color.fromARGB(255, 98, 114, 130),
+            fontWeight: FontWeight.bold,
             fontSize: 11,
           ),
         ),

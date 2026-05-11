@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0C8F3A),
+                  color: const Color.fromARGB(255, 12, 143, 58),
                   borderRadius: BorderRadius.circular(1),
                 ),
                 child: const Row(
@@ -32,14 +32,14 @@ class HomeScreen extends StatelessWidget {
                       'NEST  🌿',
                       style: TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 0.2,
                       ),
                     ),
                     Text(
                       'ShareNest',
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w700),
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 22),
               const Text(
                 'What do you need for your today?',
-                style: TextStyle(fontSize: 17, color: Color(0xFF2D3742)),
+                style: TextStyle(fontSize: 17, color: Color.fromARGB(255, 45, 55, 66)),
               ),
               const SizedBox(height: 14),
               const HomeSearchBar(),
@@ -58,9 +58,9 @@ class HomeScreen extends StatelessWidget {
                   const Text(
                     'Available Near You',
                     style: TextStyle(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Color(0xFF152233),
+                      color: Color.fromARGB(255, 21, 34, 51),
                     ),
                   ),
                   TextButton(
@@ -102,7 +102,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 14, right: 12),
         child: FloatingActionButton(
-          backgroundColor: const Color(0xFF0C8F3A),
+          backgroundColor: const Color.fromARGB(255, 12, 143, 58),
           onPressed: () {
           },
           child: const Icon(Icons.add, color: Colors.white),
@@ -113,7 +113,7 @@ class HomeScreen extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(14, 0, 14, 12),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFD7EEDB),
+          color: const Color.fromARGB(255, 215, 238, 219),
           borderRadius: BorderRadius.circular(28),
         ),
         child: Row(
@@ -164,7 +164,7 @@ class _HomeNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isActive ? const Color(0xFF0B8D39) : const Color(0xFF607081);
+    final color = isActive ? const Color.fromARGB(255, 11, 141, 57) : const Color.fromARGB(255, 96, 112, 129);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -175,7 +175,7 @@ class _HomeNavItem extends StatelessWidget {
           style: TextStyle(
             color: color,
             fontSize: 10,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],

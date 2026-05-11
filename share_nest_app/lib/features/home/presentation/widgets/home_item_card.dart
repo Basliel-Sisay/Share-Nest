@@ -30,7 +30,7 @@ class HomeItemCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFE4E9F2),
+          color: const Color.fromARGB(255, 228, 233, 242),
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
@@ -50,8 +50,8 @@ class HomeItemCard extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontSize: 14.5,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF152233),
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 21, 34, 51),
               ),
             ),
             const SizedBox(height: 7),
@@ -59,14 +59,14 @@ class HomeItemCard extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 9,
-                  backgroundColor: Color(0xFF7AC75E),
-                  child: Icon(Icons.person, size: 12, color: Color(0xFF13431B)),
+                  backgroundColor: Color.fromARGB(255, 122, 199, 94),
+                  child: Icon(Icons.person, size: 12, color: Color.fromARGB(255, 19, 67, 27)),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   '$owner  •  $distance away',
                   style:
-                      const TextStyle(fontSize: 12, color: Color(0xFF5B6673)),
+                      const TextStyle(fontSize: 12, color: Color.fromARGB(255, 91, 102, 115)),
                 ),
               ],
             ),
@@ -78,15 +78,15 @@ class HomeItemCard extends StatelessWidget {
                       ? Icons.check_circle_outline
                       : Icons.event_available,
                   size: 16,
-                  color: const Color(0xFF1D9E4F),
+                  color: const Color.fromARGB(255, 29, 158, 79),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   status,
                   style: const TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1D9E4F),
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 29, 158, 79),
                   ),
                 ),
               ],
@@ -97,8 +97,8 @@ class HomeItemCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color: isActionPrimary
-                    ? const Color(0xFF45B353)
-                    : const Color(0xFFC6DAF3),
+                    ? const Color.fromARGB(255, 69, 179, 83)
+                    : const Color.fromARGB(255, 198, 218, 243),
                 borderRadius: BorderRadius.circular(22),
               ),
               child: Text(
@@ -106,9 +106,9 @@ class HomeItemCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isActionPrimary
-                      ? const Color(0xFF0C2A0F)
-                      : const Color(0xFF23476E),
-                  fontWeight: FontWeight.w700,
+                      ? const Color.fromARGB(255, 12, 42, 15)
+                      : const Color.fromARGB(255, 35, 71, 110),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

@@ -8,20 +8,20 @@ class HomeSearchBar extends StatelessWidget {
     return Container(
       height: 54,
       decoration: BoxDecoration(
-        color: const Color(0xFFD8EAFE),
+        color: const Color.fromARGB(255, 216, 234, 254),
         borderRadius: BorderRadius.circular(27),
       ),
       child: Row(
         children: [
           const SizedBox(width: 12),
-          const Icon(Icons.search, color: Color(0xFF2E475E)),
+          const Icon(Icons.search, color: Color.fromARGB(255, 46, 71, 94)),
           const SizedBox(width: 10),
           const Expanded(
             child: Text(
               'Search for tools, books...',
               style: TextStyle(
-                color: Color(0xFF6A7A89),
-                fontWeight: FontWeight.w500,
+                color: Color.fromARGB(255, 106, 122, 137),
+                fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),
             ),
@@ -30,14 +30,14 @@ class HomeSearchBar extends StatelessWidget {
             margin: const EdgeInsets.all(6),
             padding: const EdgeInsets.symmetric(horizontal: 18),
             decoration: BoxDecoration(
-              color: const Color(0xFF14883E),
+              color: const Color.fromARGB(255, 20, 136, 62),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Center(
               child: Text(
                 'Explore',
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
