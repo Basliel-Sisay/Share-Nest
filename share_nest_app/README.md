@@ -1,16 +1,24 @@
-# share_nest_app
+# Share Nest App
 
-A new Flutter project.
+Share Nest App is a Flutter-based mobile application designed to provide a simple and modern platform for sharing and connecting users.
 
-## Getting Started
+## 🚀 Getting Started
 
-This project is a starting point for a Flutter application.
+This project is built using Flutter.
 
-A few resources to get you started if this is your first Flutter project:
+### Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Before running the project, make sure you have installed:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter SDK
+- Dart SDK
+- Android Studio or VS Code
+- Android Emulator or Physical Device
+
+## ▶️ Run the Project
+
+Clone the repository and run the following commands:
+
+```bash
+flutter pub get
+flutter run
