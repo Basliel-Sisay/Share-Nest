@@ -16,7 +16,7 @@ class LandingScreen extends StatelessWidget {
               Expanded(
                 child: Center(
                   child: InkWell(
-                    onTap: () => context.go('/signup'),
+                    onTap: () => context.go('/login'),
                     child: Container(
                       width: 320,
                       padding: const EdgeInsets.only(

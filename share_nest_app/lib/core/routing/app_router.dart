@@ -1,55 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/resource/presentation/screens/add_resource_screen.dart';
-import '../../features/resource/presentation/screens/browse_resources_screen.dart';
-import '../../features/resource/presentation/screens/my_loan_screen.dart';
-import '../../features/reservation/presentation/screens/reservation_form_screen.dart';
-import '../../features/reservation/presentation/screens/reservation_confirmation_screen.dart';
-<<<<<<< HEAD
-import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/history/presentation/screens/history_screen.dart';
-import '../../features/item/presentation/screens/item_detail_screen.dart';
 
-class AppRouter {
-  const AppRouter._();
-
-  // Route paths
-  static const String homePath = '/';
-  static const String historyPath = '/history';
-  static const String itemPath = '/item';
-
-  // Route names
-  static const String homeRoute = 'home';
-  static const String historyRoute = 'history';
-  static const String itemDetailRoute = 'item-detail';
-
-  static final GoRouter router = GoRouter(
-    initialLocation: homePath,
-    routes: [
-      GoRoute(
-        path: homePath,
-        name: homeRoute,
-        builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: historyPath,
-        name: historyRoute,
-        builder: (context, state) => const HistoryScreen(),
-      ),
-      GoRoute(
-        path: itemPath,
-        name: itemDetailRoute,
-        builder: (context, state) => const ItemDetailScreen(),
-      ),
-    ],
-  );
-}
-
-class AppRouter {
-  static final GoRouter router = GoRouter(
-    initialLocation: '/',
-    routes: [
-      GoRoute(
-=======
 import '../../features/auth/presentation/screens/landing_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
@@ -60,10 +11,22 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
 import '../../features/profile/presentation/screens/delete_account_screen.dart';
 import '../../features/profile/presentation/screens/account_deleted_screen.dart';
+import '../../features/resource/presentation/screens/add_resource_screen.dart';
+import '../../features/resource/presentation/screens/browse_resources_screen.dart';
+import '../../features/resource/presentation/screens/my_loan_screen.dart';
+import '../../features/reservation/presentation/screens/reservation_form_screen.dart';
+import '../../features/reservation/presentation/screens/reservation_confirmation_screen.dart';
+import '../widgets/custom_bottom_nav.dart';
 
 class AppRouter {
+  AppRouter._();
+
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+
   static final GoRouter router = GoRouter(
     initialLocation: '/landing',
+    navigatorKey: _rootNavigatorKey,
     routes: [
       GoRoute(
         path: '/landing',
@@ -77,58 +40,80 @@ class AppRouter {
         path: '/signup',
         builder: (context, state) => const SignupScreen(),
       ),
-      GoRoute(
->>>>>>> cc091f2aa79a72349f0d42e4f0a7f612c9e6e530
-        path: '/',
-        builder: (context, state) => const BrowseResourcesScreen(),
-      ),
-      GoRoute(
-        path: '/add',
-        builder: (context, state) => const AddResourceScreen(),
-      ),
-      GoRoute(
-        path: '/loans',
-        builder: (context, state) => const MyLoanScreen(),
-      ),
-      GoRoute(
-        path: '/reservation',
-        builder: (context, state) => const ReservationFormScreen(),
-      ),
-      GoRoute(
-        path: '/reservation-confirmation',
-        builder: (context, state) => const ReservationConfirmationScreen(),
-      ),
-<<<<<<< HEAD
-=======
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomeScreen(),
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) {
+          int currentIndex = 0;
+          final location = state.uri.path;
+          if (location == '/home') currentIndex = 0;
+          if (location == '/browse') currentIndex = 1;
+          if (location == '/add') currentIndex = 2;
+          if (location == '/loans') currentIndex = 3;
+          if (location == '/profile') currentIndex = 4;
+
+          return Scaffold(
+            body: child,
+            bottomNavigationBar: CustomBottomNav(currentIndex: currentIndex),
+          );
+        },
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/browse',
+            builder: (context, state) => const BrowseResourcesScreen(),
+          ),
+          GoRoute(
+            path: '/add',
+            builder: (context, state) => const AddResourceScreen(),
+          ),
+          GoRoute(
+            path: '/loans',
+            builder: (context, state) => const MyLoanScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/history',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const HistoryScreen(),
       ),
       GoRoute(
         path: '/item',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ItemDetailScreen(),
       ),
       GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-      GoRoute(
         path: '/settings',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
         path: '/delete-account',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const DeleteAccountScreen(),
       ),
       GoRoute(
         path: '/account-deleted',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const AccountDeletedScreen(),
       ),
->>>>>>> cc091f2aa79a72349f0d42e4f0a7f612c9e6e530
+      GoRoute(
+        path: '/reservation',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ReservationFormScreen(),
+      ),
+      GoRoute(
+        path: '/reservation-confirmation',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ReservationConfirmationScreen(),
+      ),
     ],
   );
 }

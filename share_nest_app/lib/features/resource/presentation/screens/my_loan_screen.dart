@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../widgets/loan_item_card.dart';
 
 class MyLoanScreen extends StatelessWidget {
@@ -10,23 +10,45 @@ class MyLoanScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ShareNest'),
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Icon(Icons.eco),
+        backgroundColor: Colors.green,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: const [
+                Text(
+                  'NEST_ ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(
+                  Icons.eco,
+                  color: Colors.black,
+                  size: 26
+                  ),
+              ],
+            ),
+            const Text(
+              'ShareNest',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: AppColors.primaryGreen,
+            color: Colors.green,
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
             width: double.infinity,
             child: const Column(
@@ -82,13 +104,16 @@ class MyLoanScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Expanded(
-                          child: Center(
-                            child: Text(
-                              'Reservations',
-                              style: TextStyle(
-                                color: AppColors.textGrey,
-                                fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => context.push('/reservation'),
+                            child: const Center(
+                              child: Text(
+                                'Reservations',
+                                style: TextStyle(
+                                  color: AppColors.textGrey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -218,7 +243,6 @@ class MyLoanScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const CustomBottomNav(currentIndex: 3),
     );
   }
 }

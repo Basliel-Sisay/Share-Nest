@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/routing/app_router.dart';
 import '../widgets/history_item_tile.dart';
 
 class HistoryScreen extends StatelessWidget {
@@ -14,7 +13,7 @@ class HistoryScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: const Color.fromARGB(255, 21, 125, 58),
         leading: IconButton(
-          onPressed: () => context.go('/home'),
+          onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
         ),
         title: const Text(
@@ -115,12 +114,12 @@ class HistoryScreen extends StatelessWidget {
               isActive: true,
             ),
             GestureDetector(
-              onTap: () => context.go('/history'),
+              onTap: () {},
               child: const _HistoryNavItem(
                   icon: Icons.help_outline, label: 'HELP'),
             ),
             GestureDetector(
-              onTap: () => context.go('/history'),
+              onTap: () => context.go('/settings'),
               child: const _HistoryNavItem(
                   icon: Icons.settings, label: 'SETTINGS'),
             ),

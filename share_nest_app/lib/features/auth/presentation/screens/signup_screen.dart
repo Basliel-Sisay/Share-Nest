@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -244,6 +245,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Account created successfully')),
                               );
+                              context.go('/home');
                         }
                         else{
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -269,6 +271,28 @@ class _SignupScreenState extends State<SignupScreen> {
                             TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Colors.white),
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already have an account?',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.go('/login');
+                        },
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

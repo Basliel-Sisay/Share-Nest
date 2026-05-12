@@ -1,15 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/widgets/custom_bottom_nav.dart';
 
 class AddResourceScreen extends StatelessWidget {
   const AddResourceScreen({super.key});
 
+  void _addResource(BuildContext context) {
+    // Show Snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Resource added successfully!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    
+    // Go back to Home
+    context.go('/home');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: const [
+                Text(
+                  'NEST_ ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(
+                  Icons.eco,
+                  color: Colors.black,
+                  size: 26
+                  ),
+              ],
+            ),
+            const Text(
+              'ShareNest',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +107,7 @@ class AddResourceScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _addResource(context),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -88,25 +135,6 @@ class AddResourceScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNav(
-        currentIndex: 2,
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      title: const Text('ShareNest'),
-      leading: const Padding(
-        padding: EdgeInsets.all(8),
-        child: Icon(Icons.eco),
-      ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.help_outline),
-        ),
-      ],
     );
   }
 
@@ -153,7 +181,7 @@ class _HeaderSection extends StatelessWidget {
         right: 16,
         bottom: 24,
       ),
-      color: AppColors.primaryGreen,
+      color: Colors.green,
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -14,7 +14,7 @@ class CustomBottomNav extends StatelessWidget {
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black,
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -31,6 +31,7 @@ class CustomBottomNav extends StatelessWidget {
                 label: 'HOME',
                 isActive: currentIndex == 0,
                 onTap: () {
+                  if (currentIndex != 0) context.go('/home');
                 },
                 ),
                 _buildNavItem(
@@ -38,7 +39,7 @@ class CustomBottomNav extends StatelessWidget {
                 label: 'BROWSE',
                 isActive: currentIndex == 1,
                 onTap: () {
-                  if (currentIndex != 1) context.go('/');
+                  if (currentIndex != 1) context.go('/browse');
                 },
                 ),
                 _buildAddButton(context),
