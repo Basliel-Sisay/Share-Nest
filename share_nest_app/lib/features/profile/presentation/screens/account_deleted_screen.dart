@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-class AccountDeletedScreen extends StatelessWidget {
+class AccountDeletedScreen extends StatefulWidget {
   const AccountDeletedScreen({super.key});
+
+  @override
+  State<AccountDeletedScreen> createState() => _AccountDeletedScreenState();
+}
+
+class _AccountDeletedScreenState extends State<AccountDeletedScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _goHome() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +31,16 @@ class AccountDeletedScreen extends StatelessWidget {
               size: 100,
               color: Colors.green,
             ),
+
             const SizedBox(height: 24),
+
             const Text(
               "Account Deleted",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 12),
+
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Text(
@@ -30,22 +48,21 @@ class AccountDeletedScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
+
             const SizedBox(height: 40),
+
             Center(
               child: ElevatedButton(
-                onPressed: () => context.go('/landing'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 14,
+                    onPressed: _goHome,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 14,
+                      ),
+                    ),
+                    child: const Text("Return to Home", style: TextStyle(color: Colors.white)),
                   ),
-                ),
-                child: const Text(
-                  "Return to Home",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
             ),
           ],
         ),

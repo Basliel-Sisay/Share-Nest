@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../application/auth_state.dart';
-import '../providers/auth_provider.dart';
-
-class LandingScreen extends ConsumerWidget {
+class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(authProvider, (previous, next) {
-      if (next.status == AuthStatus.authenticated) {
-        context.go('/home');
-      }
-    });
-
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color.fromARGB(255, 241, 242, 241),
+       color: const Color.fromARGB(255, 241, 242, 241),
         child: SafeArea(
           child: Column(
             children: [
@@ -33,8 +23,8 @@ class LandingScreen extends ConsumerWidget {
                         top: 120,
                         right: 40,
                         left: 40,
-                        bottom: 30,
-                      ),
+                        bottom: 30
+                        ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
@@ -52,8 +42,7 @@ class LandingScreen extends ConsumerWidget {
                             width: 100,
                             height: 100,
                             decoration: BoxDecoration(
-                              color:
-                                  const Color.fromARGB(255, 243, 247, 243),
+                              color: const Color.fromARGB(255, 243, 247, 243),
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: const Center(
@@ -75,7 +64,7 @@ class LandingScreen extends ConsumerWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height:10),
                           const Text(
                             'Share Smarter, Waste Less',
                             textAlign: TextAlign.center,
@@ -89,51 +78,51 @@ class LandingScreen extends ConsumerWidget {
                             width: double.infinity,
                             padding: const EdgeInsets.all(18),
                             decoration: BoxDecoration(
-                              color:
-                                  const Color.fromARGB(255, 255, 255, 255),
+                              color: const Color.fromARGB(255, 255, 255, 255),
                               borderRadius: BorderRadius.circular(18),
                             ),
-                            child: const Column(
+                            child: Column(
                               children: [
                                 LinearProgressIndicator(
                                   value: 0.3,
-                                  color: Color.fromARGB(255, 2, 100, 5),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 232, 245, 233),
+                                  color: const Color.fromARGB(255, 2, 100, 5),
+                                  backgroundColor: const Color.fromARGB(255, 232, 245, 233),
                                 ),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 Text(
                                   'ENTERING SHARE NEST ...',
                                   style: TextStyle(
                                     fontSize: 12,
                                     letterSpacing: 1.2,
-                                    color:
-                                        Color.fromARGB(255, 117, 117, 117),
+                                    color: const Color.fromARGB(255, 117, 117, 117),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(height: 22),
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                               Icon(Icons.security,
-                                  size: 13, color: Colors.green),
+                               size: 13,
+                               color: Colors.green
+                               ),
                               SizedBox(width: 5),
                               SizedBox(height: 70),
                               Text(
                                 'Trusted community network',
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.grey),
+                                  fontSize: 12,
+                                  color: Colors.grey
+                                  ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 3),
                           const Text(
                             'Tap anywhere to continue',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                         ],
                       ),
