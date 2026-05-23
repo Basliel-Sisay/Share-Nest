@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/app_providers.dart';
 import '../widgets/history_item_tile.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loansAsync = ref.watch(loansProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -34,62 +38,73 @@ class HistoryScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'Your Impact',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 22, 36, 52),
-                ),
+        child: loansAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Text('Error: $e'),
+          data: (loans) {
+            final completed = loans.where((l) => l.isReturned || l.isCancelled || l.isRejected).toList();
+            final active = loans.where((l) => l.isActive || l.isApproved || l.isPending).toList();
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Your Impact',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 22, 36, 52),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  if (completed.isNotEmpty) ...[
+                    const Text(
+                      'COMPLETED',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 73, 83, 95),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...completed.map((loan) => HistoryItemTile(
+                      itemName: loan.title,
+                      borrower: loan.borrowerName,
+                      period: loan.dateText,
+                      stateLabel: loan.statusText,
+                      stateColor: Color(loan.statusColorArgb),
+                    )),
+                    const SizedBox(height: 18),
+                  ],
+                  if (active.isNotEmpty) ...[
+                    const Text(
+                      'ACTIVE',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 73, 83, 95),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...active.map((loan) => HistoryItemTile(
+                      itemName: loan.title,
+                      borrower: loan.borrowerName,
+                      period: loan.dateText,
+                      stateLabel: loan.statusText,
+                      stateColor: Color(loan.statusColorArgb),
+                    )),
+                    const SizedBox(height: 18),
+                  ],
+                  if (completed.isEmpty && active.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Text('No loan history yet. Start sharing!'),
+                    ),
+                ],
               ),
-              SizedBox(height: 18),
-              Text(
-                'RECENT CHANGES',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Color.fromARGB(255, 73, 83, 95),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 10),
-              HistoryItemTile(
-                itemName: 'Power Drill',
-                borrower: 'Elias Debalke',
-                period: 'APR 12 - APR 14, 2026',
-                stateLabel: 'RETURNED',
-                stateColor: Color.fromARGB(255, 80, 190, 98),
-                imagePath: 'assets/images/drill.png',
-              ),
-              HistoryItemTile(
-                itemName: '6-Step Ladder',
-                borrower: 'Haymanot Samson',
-                period: 'DUE BACK TOMORROW',
-                stateLabel: 'IN USE',
-                stateColor: Color.fromARGB(255, 184, 217, 247),
-                imagePath: 'assets/images/ladder.png',
-              ),
-              HistoryItemTile(
-                itemName: '4-Person Tent',
-                borrower: 'Kirubel Awoke',
-                period: 'MAR 24 - MAR 28, 2026',
-                stateLabel: 'ARCHIVED',
-                stateColor: Color.fromARGB(255, 212, 224, 239),
-                imagePath: 'assets/images/tent.png',
-              ),
-              HistoryItemTile(
-                itemName: 'Juice Extractor',
-                borrower: 'Elias Debalke',
-                period: 'FEB 15 - FEB 16, 2023',
-                stateLabel: 'RETURNED',
-                stateColor: Color.fromARGB(255, 80, 190, 98),
-                imagePath: 'assets/images/juice_extractor.png',
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
       bottomNavigationBar: Container(
