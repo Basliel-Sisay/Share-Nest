@@ -82,7 +82,7 @@ class HomeScreen extends ConsumerWidget {
                 : allResources.where((r) => r.isAvailable).toList();
 
             if (nearYou.isEmpty) {
-              return const Center(child: Text('No resources available yet.'));
+              return const Center(child: Text('No resources available yet'));
             }
 
             return SingleChildScrollView(

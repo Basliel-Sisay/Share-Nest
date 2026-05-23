@@ -22,7 +22,7 @@ class ItemDetailScreen extends ConsumerWidget {
 
   Future<void> _requestBorrow(
       BuildContext context, WidgetRef ref, String title, String ownerId, String ownerName) async {
-    final user = ref.read(authProvider).user;
+    final user = ref.watch(authProvider).user;
     if (user == null) return;
 
     final now = DateTime.now();
@@ -70,7 +70,7 @@ class ItemDetailScreen extends ConsumerWidget {
       await ref.read(loansProvider.notifier).requestLoan(loan.toMap());
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Loan request submitted. Awaiting confirmation.')),
+        const SnackBar(content: Text('Loan request submitted. Awaiting confirmation')),
       );
     } catch (e) {
       if (!context.mounted) return;
@@ -221,7 +221,7 @@ class ItemDetailScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Item Condition & Usage',
+                                  'Item Condition and Usage',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),

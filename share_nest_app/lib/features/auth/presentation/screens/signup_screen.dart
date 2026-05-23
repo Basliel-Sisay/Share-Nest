@@ -60,6 +60,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        context.go('/home');
       }
     });
 

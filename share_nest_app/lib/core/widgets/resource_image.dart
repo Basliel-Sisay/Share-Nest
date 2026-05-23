@@ -1,5 +1,5 @@
-import 'dart:io';
-
+import 'dart:io' show File;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class ResourceImage extends StatelessWidget {
@@ -18,12 +18,18 @@ class ResourceImage extends StatelessWidget {
 
   bool get _isAsset => path.startsWith('assets/');
   bool get _isFile =>
-      path.startsWith('/') || RegExp(r'^[A-Za-z]:\\').hasMatch(path);
+      !kIsWeb && (path.startsWith('/') || RegExp(r'^[A-Za-z]:\\').hasMatch(path));
 
   @override
   Widget build(BuildContext context) {
     if (_isAsset) {
-      return Image.asset(path, height: height, width: width, fit: fit);
+      return Image.asset(
+        path,
+        height: height,
+        width: width,
+        fit: fit,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
     }
     if (_isFile) {
       return Image.file(
@@ -44,10 +50,11 @@ class ResourceImage extends StatelessWidget {
   }
 
   Widget _placeholder() {
-    return SizedBox(
+    return Container(
       height: height,
       width: width,
-      child: const Icon(Icons.image_outlined, size: 48),
+      color: Colors.grey[200],
+      child: const Icon(Icons.image_outlined, size: 48, color: Colors.grey),
     );
   }
 }

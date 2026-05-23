@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+
 import '../config/api_config.dart';
 
 class ApiException implements Exception {
@@ -10,18 +13,30 @@ class ApiException implements Exception {
 
   final String message;
   final int? statusCode;
+
   @override
   String toString() => 'ApiException($statusCode): $message';
 }
 
 class ApiClient {
   ApiClient({http.Client? client, this.authToken})
-      : _client = client ?? http.Client();
+      : _client = client ?? _createClient();
 
-  static const _timeout = Duration(seconds: 15);
+  static const _timeout = Duration(seconds: 8);
+  static const _connectionTimeout = Duration(seconds: 5);
 
   final http.Client _client;
   final String? authToken;
+
+  static http.Client _createClient() {
+    if (kIsWeb) {
+      return http.Client();
+    }
+    final httpClient = HttpClient()
+      ..connectionTimeout = _connectionTimeout
+      ..idleTimeout = _connectionTimeout;
+    return IOClient(httpClient);
+  }
 
   ApiClient withAuthToken(String token) {
     return ApiClient(client: _client, authToken: token);
@@ -48,7 +63,9 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> post(
-      String path, Map<String, dynamic> body) async {
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final response = await _request(
       _client.post(
         ApiConfig.uri(path),
@@ -61,7 +78,9 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> put(
-      String path, Map<String, dynamic> body) async {
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final response = await _request(
       _client.put(
         ApiConfig.uri(path),
@@ -74,7 +93,9 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> patch(
-      String path, Map<String, dynamic> body) async {
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final response = await _request(
       _client.patch(
         ApiConfig.uri(path),
@@ -93,36 +114,45 @@ class ApiClient {
     _ensureSuccess(response, okStatuses: {200, 202, 204});
   }
 
-  Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        if (authToken != null) 'Authorization': 'Bearer $authToken',
-      };
+  Map<String, String> get _headers {
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    if (authToken != null) {
+      headers['Authorization'] = 'Bearer $authToken';
+    }
+    return headers;
+  }
 
   Future<http.Response> _request(Future<http.Response> request) async {
     try {
       return await request.timeout(_timeout);
     } on TimeoutException {
       throw ApiException(
-        'Connection timed out. Make sure the backend server is running.',
+        'Connection timed out. Start the backend: cd backend && npm start',
       );
     } on SocketException {
       throw ApiException(
-        'Cannot connect to server. Check that the backend is running '
-        'and the device can reach it.',
+        'Cannot reach the server at ${ApiConfig.baseUrl}. '
+        'Run the backend (npm start in the backend folder).',
       );
     }
   }
 
-  void _ensureSuccess(http.Response response,
-      {Set<int> okStatuses = const {200}}) {
+  void _ensureSuccess(
+    http.Response response, {
+    Set<int> okStatuses = const {200},
+  }) {
     if (okStatuses.contains(response.statusCode)) {
       return;
     }
     String message = response.body;
     try {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      message = json['error']?.toString() ?? message;
+      if (json['error'] != null) {
+        message = json['error'].toString();
+      }
     } catch (_) {}
     throw ApiException(
       message.isEmpty ? 'Request failed' : message,
