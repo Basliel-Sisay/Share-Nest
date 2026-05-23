@@ -1,3 +1,6 @@
+# here is the admin emain and password 
+Admin credentials: admin@sharenest.com 
+password: admin123
 # ShareNest Node API
 
 This is a small backend built with Node.js and Express  
