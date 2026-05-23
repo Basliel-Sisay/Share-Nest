@@ -1,20 +1,20 @@
-const { DatabaseSync } = require('node:sqlite');
+const {DatabaseSync} = require('node:sqlite');
 const fs = require('fs');
 const path = require('path');
 const dataDir = path.join(__dirname, '..', 'data');
-if (!fs.existsSync(dataDir)) {
+if (!fs.existsSync(dataDir)){
   fs.mkdirSync(dataDir, { recursive: true });
 }
 const dbPath = path.join(dataDir, 'share_nest.db');
 const database = new DatabaseSync(dbPath);
 database.exec('PRAGMA journal_mode = WAL;');
 
-function getColumnNames(table) {
+function getColumnNames(table){
   const rows = database.prepare(`PRAGMA table_info(${table})`).all();
   return rows.map((r) => r.name);
 }
 
-function addColumnIfMissing(table, columnDef) {
+function addColumnIfMissing(table, columnDef){
   const existing = getColumnNames(table);
   const colName = columnDef.split(' ')[0];
   if (!existing.includes(colName)) {
@@ -22,7 +22,7 @@ function addColumnIfMissing(table, columnDef) {
   }
 }
 
-function initSchema() {
+function initSchema(){
   database.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -85,8 +85,6 @@ function initSchema() {
       created_at TEXT DEFAULT (datetime('now'))
     );
   `);
-
-  // Migrate tables created by older schema versions
   addColumnIfMissing('users', 'role TEXT NOT NULL DEFAULT \'user\'');
   addColumnIfMissing('resources', 'owner_id TEXT NOT NULL DEFAULT \'\'');
   addColumnIfMissing('loans', 'owner_id TEXT NOT NULL DEFAULT \'\'');
@@ -101,7 +99,7 @@ function initSchema() {
 }
 initSchema();
 
-function prepare(sql) {
+function prepare(sql){
   const stmt = database.prepare(sql);
   return {
     all: (...params) => stmt.all(...params),
@@ -110,19 +108,19 @@ function prepare(sql) {
   };
 }
 
-function transaction(fn) {
+function transaction(fn){
   return (arg) => {
     database.exec('BEGIN IMMEDIATE');
     try {
       fn(arg);
       database.exec('COMMIT');
-    } catch (error) {
+    } 
+    catch (error) {
       database.exec('ROLLBACK');
       throw error;
     }
   };
 }
-
 module.exports = {
   prepare,
   transaction,

@@ -2,7 +2,7 @@ import '../datasources/auth_local_datasource.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../models/user_model.dart';
 
-class AuthRepository {
+class AuthRepository{
   AuthRepository({
     required AuthLocalDataSource local,
     required AuthRemoteDataSource remote,
@@ -27,10 +27,7 @@ class AuthRepository {
     return user;
   }
 
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<UserModel> login({required String email,required String password}) async{
     final result = await _remote.login(
       email: email,
       password: password,
@@ -40,7 +37,7 @@ class AuthRepository {
     return user;
   }
 
-  Future<UserModel?> tryAutoLogin() async {
+  Future<UserModel?> tryAutoLogin() async{
     final cached = await _local.getUser();
     if (cached == null || cached.token == null) return null;
 
@@ -49,20 +46,21 @@ class AuthRepository {
       final user = fresh.copyWith(token: cached.token);
       await _local.saveUser(user);
       return user;
-    } catch (_) {
+    } 
+    catch (_) {
       return cached;
     }
   }
 
-  Future<void> deleteAccount() async {
+  Future<void> deleteAccount() async{
     final cached = await _local.getUser();
-    if (cached?.token != null) {
+    if (cached?.token != null){
       await _remote.deleteAccount(cached!.token!);
     }
     await _local.deleteUser();
   }
 
-  Future<void> logout() async {
+  Future<void> logout() async{
     await _local.deleteUser();
   }
 }

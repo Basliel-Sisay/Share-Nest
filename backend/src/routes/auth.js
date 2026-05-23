@@ -2,44 +2,43 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
-
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'share-nest-dev-secret';
 
-function authenticate(req, res, next) {
+function authenticate(req, res, next){
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'No token provided' });
   }
-  try {
+  try{
     const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
     req.userId = decoded.userId;
     req.userEmail = decoded.email;
     req.userRole = decoded.role;
     next();
-  } catch {
+  } 
+  catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
 
-router.post('/signup', (req, res) => {
+router.post('/signup', (req, res) =>{
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res
       .status(400)
       .json({ error: 'name, email, and password are required' });
   }
-  if (password.length < 6) {
+  if (password.length < 6){
     return res
       .status(400)
       .json({ error: 'Password must be at least 6 characters' });
   }
 
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
-  if (existing) {
+  if (existing){
     return res.status(409).json({ error: 'Email already registered' });
   }
-
   const id = `user-${Date.now()}`;
   const hashed = bcrypt.hashSync(password, 10);
   db.prepare(
@@ -50,12 +49,12 @@ router.post('/signup', (req, res) => {
     .prepare('SELECT id, name, email, role, created_at FROM users WHERE id = ?')
     .get(id);
   const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
-    expiresIn: '7d',
+    expiresIn: '1d',
   });
   res.status(201).json({ user, token });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', (req, res) =>{
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: 'email and password are required' });
@@ -76,7 +75,7 @@ router.post('/login', (req, res) => {
   const token = jwt.sign(
     { userId: user.id, email: user.email, role: user.role },
     JWT_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: '1d' }
   );
   res.json({ user: safeUser, token });
 });
@@ -89,7 +88,7 @@ router.get('/me', authenticate, (req, res) => {
   res.json({ user });
 });
 
-router.delete('/account', authenticate, (req, res) => {
+router.delete('/account', authenticate, (req, res) =>{
   const userId = req.userId;
   db.prepare('DELETE FROM reservations WHERE owner_id = ? OR borrower_id = ?').run(
     userId, userId
@@ -102,7 +101,7 @@ router.delete('/account', authenticate, (req, res) => {
   res.json({ message: 'Account and all associated data deleted' });
 });
 
-function requireAdmin(req, res, next) {
+function requireAdmin(req, res, next){
   if (req.userRole !== 'admin') {
     return res.status(403).json({ error: 'Admin access required' });
   }

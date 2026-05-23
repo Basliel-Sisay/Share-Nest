@@ -6,15 +6,12 @@ const router = express.Router();
 
 function formatReturnDate(iso) {
   const d = new Date(iso);
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
+  const months = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];
   const hours = d.getHours();
   const minutes = d.getMinutes().toString().padStart(2, '0');
   const ampm = hours >= 12 ? 'PM' : 'AM';
   const h12 = hours % 12 || 12;
-  return `Return by ${months[d.getMonth()]} ${d.getDate()}, ${h12}:${minutes} ${ampm}`;
+  return "Return by " + months[d.getMonth()] + " "  + d.getDate()  + ", "  + h12  + ":" + minutes  + " "  + ampm;
 }
 
 router.get('/', authenticate, (req, res) => {
