@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class DeleteAccountScreen extends StatefulWidget {
+import '../../../../core/providers/app_providers.dart';
+
+class DeleteAccountScreen extends ConsumerStatefulWidget {
   const DeleteAccountScreen({super.key});
 
   @override
-  State<DeleteAccountScreen> createState() => _DeleteAccountScreenState();
+  ConsumerState<DeleteAccountScreen> createState() => _DeleteAccountScreenState();
 }
 
-class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
+class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
   final TextEditingController _controller = TextEditingController();
   bool canDelete = false;
 
@@ -30,8 +33,10 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
+              await ref.read(authProvider.notifier).deleteAccount();
+              if (!context.mounted) return;
               context.pushReplacement('/account-deleted');
             },
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
@@ -43,6 +48,8 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text("Delete Account")),
       body: Padding(
@@ -64,10 +71,24 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
             const SizedBox(height: 16),
 
+            if (authState.error != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  authState.error!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+
             ElevatedButton(
-              onPressed: canDelete ? confirmDelete : null,
+              onPressed: (canDelete && !authState.isLoading) ? confirmDelete : null,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text("Delete Account", style: TextStyle(color: Colors.white)),
+              child: authState.isLoading
+                  ? const SizedBox(
+                      height: 20, width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Text("Delete Account", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
