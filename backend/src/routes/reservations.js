@@ -123,4 +123,22 @@ router.delete('/:id', authenticate, (req, res) => {
   res.json({ message: 'Reservation cancelled' });
 });
 
+router.patch('/:id/status', authenticate, (req, res) => {
+  const { status } = req.body;
+  if (!['CONFIRMED', 'CANCELLED'].includes(status)) {
+    return res.status(400).json({ error: 'Status must be CONFIRMED or CANCELLED' });
+  }
+
+  const existing = db.prepare('SELECT * FROM reservations WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Reservation not found' });
+
+  if (existing.owner_id !== req.userId && req.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Only the owner or admin can update reservation status' });
+  }
+
+  db.prepare('UPDATE reservations SET status = ? WHERE id = ?').run(status, req.params.id);
+  const updated = db.prepare('SELECT * FROM reservations WHERE id = ?').get(req.params.id);
+  res.json(updated);
+});
+
 module.exports = router;
