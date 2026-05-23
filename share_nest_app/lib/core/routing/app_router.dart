@@ -17,6 +17,10 @@ import '../../features/resource/presentation/screens/browse_resources_screen.dar
 import '../../features/resource/presentation/screens/my_loan_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_form_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_confirmation_screen.dart';
+import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
+import '../../features/admin/presentation/screens/user_management_screen.dart';
+import '../../features/admin/presentation/screens/admin_resource_management_screen.dart';
+import '../../features/admin/presentation/screens/admin_loan_management_screen.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../providers/app_providers.dart';
 
@@ -145,6 +149,34 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/reservation-confirmation',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ReservationConfirmationScreen(),
+      ),
+      GoRoute(
+        path: '/edit-resource/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return AddResourceScreen(editResourceId: id);
+        },
+      ),
+      GoRoute(
+        path: '/admin',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AdminDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/admin/users',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const UserManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/resources',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AdminResourceManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/loans',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AdminLoanManagementScreen(),
       ),
     ],
   );
