@@ -15,6 +15,7 @@ function authenticate(req, res, next) {
     const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
     req.userId = decoded.userId;
     req.userEmail = decoded.email;
+    req.userRole = decoded.role;
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
@@ -101,4 +102,11 @@ router.delete('/account', authenticate, (req, res) => {
   res.json({ message: 'Account and all associated data deleted' });
 });
 
-module.exports = { router, authenticate };
+function requireAdmin(req, res, next) {
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
+}
+
+module.exports = { router, authenticate, requireAdmin };
