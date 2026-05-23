@@ -19,6 +19,15 @@ function seed() {
     console.log('Seed user created: test@example.com / password123');
   }
 
+  const adminCount = db.prepare("SELECT COUNT(*) AS c FROM users WHERE role = 'admin'").get().c;
+  if (adminCount === 0) {
+    const adminHashed = bcrypt.hashSync('admin123', 10);
+    db.prepare(
+      "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)"
+    ).run('admin-1', 'Admin', 'admin@sharenest.com', adminHashed, 'admin');
+    console.log('Admin user created: admin@sharenest.com / admin123');
+  }
+
   const resourceCount = db.prepare('SELECT COUNT(*) AS c FROM resources').get().c;
   if (resourceCount > 0) {
     console.log('Database already seeded.');
