@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/providers/app_providers.dart';
 import '../../../../core/widgets/resource_image.dart';
+import '../../../../data/models/loan_item.dart';
 import '../widgets/owner_info_tile.dart';
 
 class ItemDetailScreen extends ConsumerWidget {
@@ -16,6 +18,66 @@ class ItemDetailScreen extends ConsumerWidget {
           ReservationDraft(resourceId: resourceId, resourceTitle: title),
         );
     context.push('/reservation');
+  }
+
+  Future<void> _requestBorrow(
+      BuildContext context, WidgetRef ref, String title, String ownerId, String ownerName) async {
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+
+    final now = DateTime.now();
+    final pickup = await showDatePicker(
+      context: context,
+      initialDate: now.add(const Duration(days: 1)),
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 90)),
+    );
+    if (pickup == null || !context.mounted) return;
+
+    final ret = await showDatePicker(
+      context: context,
+      initialDate: pickup.add(const Duration(days: 1)),
+      firstDate: pickup,
+      lastDate: pickup.add(const Duration(days: 90)),
+    );
+    if (ret == null || !context.mounted) return;
+
+    final timeFormat = DateFormat.jm();
+    final pickupTime = const TimeOfDay(hour: 10, minute: 0);
+    final returnTime = const TimeOfDay(hour: 16, minute: 0);
+    final pickupDt = DateTime(pickup.year, pickup.month, pickup.day, pickupTime.hour, pickupTime.minute);
+    final returnDt = DateTime(ret.year, ret.month, ret.day, returnTime.hour, returnTime.minute);
+
+    final loan = LoanItem(
+      id: 'loan-${DateTime.now().millisecondsSinceEpoch}',
+      resourceId: resourceId,
+      title: title,
+      ownerId: ownerId,
+      ownerName: ownerName,
+      borrowerId: user.id,
+      borrowerName: user.name,
+      statusText: 'PENDING',
+      dateText: 'Pending confirmation',
+      pickupDate: pickupDt,
+      returnDate: returnDt,
+      pickupTime: timeFormat.format(pickupDt),
+      returnTime: timeFormat.format(returnDt),
+      statusColorArgb: 0xFFF3E5F5,
+      statusTextColorArgb: 0xFF7B1FA2,
+    );
+
+    try {
+      await ref.read(loansProvider.notifier).requestLoan(loan.toMap());
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Loan request submitted. Awaiting confirmation.')),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to request loan: $e')),
+      );
+    }
   }
 
   void _deleteResource(BuildContext context, WidgetRef ref, String id) async {
@@ -201,7 +263,7 @@ class ItemDetailScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                        ] else ...[
+                          ] else ...[
                           Row(
                             children: [
                               Expanded(
@@ -231,10 +293,12 @@ class ItemDetailScreen extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(26),
                                     ),
                                   ),
-                                  onPressed: () => _startReservation(
+                                  onPressed: () => _requestBorrow(
                                     context,
                                     ref,
                                     resource.title,
+                                    resource.ownerId,
+                                    resource.ownerName,
                                   ),
                                   child: const Text('Request to Borrow'),
                                 ),
