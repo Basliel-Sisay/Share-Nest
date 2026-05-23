@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/screens/landing_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
@@ -24,18 +25,34 @@ class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+  static final List<String> _authRoutes = ['/landing', '/login', '/signup'];
+
+  static final List<String> _protectedRoutes = [
+    '/home',
+    '/browse',
+    '/add',
+    '/loans',
+    '/profile',
+    '/history',
+    '/item',
+    '/settings',
+    '/delete-account',
+    '/account-deleted',
+    '/reservation',
+    '/reservation-confirmation',
+  ];
+
   static final GoRouter router = GoRouter(
     initialLocation: '/landing',
     navigatorKey: _rootNavigatorKey,
+    refreshListenable: authChanges,
+    redirect: _authRedirect,
     routes: [
       GoRoute(
         path: '/landing',
         builder: (context, state) => const LandingScreen(),
       ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/signup',
         builder: (context, state) => const SignupScreen(),
@@ -116,4 +133,19 @@ class AppRouter {
       ),
     ],
   );
+
+  static String? _authRedirect(BuildContext context, GoRouterState state) {
+    final loggedIn = isAuthenticated;
+    final location = state.matchedLocation;
+
+    if (loggedIn && _authRoutes.contains(location)) {
+      return '/home';
+    }
+
+    if (!loggedIn && _protectedRoutes.contains(location)) {
+      return '/landing';
+    }
+
+    return null;
+  }
 }
