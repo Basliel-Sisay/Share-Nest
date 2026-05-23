@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/screens/landing_screen.dart';
@@ -17,16 +18,45 @@ import '../../features/resource/presentation/screens/my_loan_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_form_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_confirmation_screen.dart';
 import '../widgets/custom_bottom_nav.dart';
+import '../providers/app_providers.dart';
 
-class AppRouter {
-  AppRouter._();
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
-  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
-  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+bool _isAuthRoute(String path) {
+  return path == '/landing' || path == '/login' || path == '/signup';
+}
 
-  static final GoRouter router = GoRouter(
+class _AuthRedirectNotifier extends ChangeNotifier {
+  bool isAuthenticated = false;
+
+  void update(bool value) {
+    if (value != isAuthenticated) {
+      isAuthenticated = value;
+      notifyListeners();
+    }
+  }
+}
+
+final _authRedirectNotifier = _AuthRedirectNotifier();
+
+final appRouterProvider = Provider<GoRouter>((ref) {
+  ref.listen<AuthState>(authProvider, (_, next) {
+    _authRedirectNotifier.update(next.isAuthenticated);
+  });
+
+  return GoRouter(
     initialLocation: '/landing',
     navigatorKey: _rootNavigatorKey,
+    refreshListenable: _authRedirectNotifier,
+    redirect: (context, state) {
+      final isLoggedIn = _authRedirectNotifier.isAuthenticated;
+      final path = state.matchedLocation;
+
+      if (!isLoggedIn && !_isAuthRoute(path)) return '/landing';
+      if (isLoggedIn && _isAuthRoute(path)) return '/home';
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/landing',
@@ -118,4 +148,4 @@ class AppRouter {
       ),
     ],
   );
-}
+});

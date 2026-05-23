@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatefulWidget {
+import '../../../../core/providers/app_providers.dart';
+import '../../presentation/controllers/auth_controller.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>{
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -16,11 +20,12 @@ class _LoginScreenState extends State<LoginScreen>{
   bool _rememberMe = false;
 
   @override
-  void dispose(){
+  void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
+
   Widget _inputField({
     required String label,
     String? hintText,
@@ -49,21 +54,21 @@ class _LoginScreenState extends State<LoginScreen>{
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: const TextStyle(color: Colors.grey),
-            prefixIcon: Icon(
-              icon,
-              color: Colors.green,
-            ),
+            prefixIcon: Icon(icon, color: Colors.green),
             suffixIcon: suffix,
             filled: true,
             fillColor: const Color.fromARGB(255, 245, 245, 245),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide(color: const Color.fromARGB(255, 224, 224, 224)),
+              borderSide:
+                  BorderSide(color: const Color.fromARGB(255, 224, 224, 224)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide(color: const Color.fromARGB(255, 224, 224, 224)),
+              borderSide:
+                  BorderSide(color: const Color.fromARGB(255, 224, 224, 224)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
@@ -83,29 +88,32 @@ class _LoginScreenState extends State<LoginScreen>{
     );
   }
 
-  void _onLoginPressed(){
-    if(_formKey.currentState != null){
-      if(_formKey.currentState!.validate()){
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Logged in successfully')),
-        );
-        context.go('/home');
-      }
-      else{
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fix the errors in red')),
-        );
-      }
+  void _onLoginPressed() {
+    if (_formKey.currentState == null || !_formKey.currentState!.validate()) {
+      return;
     }
-    else{
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Form is not valid')),
-      );
-    }
+
+    ref.read(authProvider.notifier).login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+  }
+
+  void _dismissKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (!next.isLoading && next.error == null && next.isAuthenticated) {
+        _dismissKeyboard();
+        context.go('/home');
+      }
+    });
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(134, 244, 241, 245),
       appBar: AppBar(
@@ -124,11 +132,7 @@ class _LoginScreenState extends State<LoginScreen>{
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(
-                  Icons.eco,
-                  color: Colors.black,
-                  size: 26
-                  ),
+                Icon(Icons.eco, color: Colors.black, size: 26),
               ],
             ),
             const Text(
@@ -145,26 +149,26 @@ class _LoginScreenState extends State<LoginScreen>{
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.only(
-            top:24,
+            top: 24,
             bottom: 24,
             left: 20,
             right: 20,
-            ),
+          ),
           children: [
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(
-                left:26,
+                left: 26,
                 top: 28,
                 right: 26,
-                bottom: 24
-                ),
+                bottom: 24,
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 24,
                   ),
                 ],
@@ -176,8 +180,8 @@ class _LoginScreenState extends State<LoginScreen>{
                     'Welcome Back',
                     style: TextStyle(
                       fontSize: 35,
-                      fontWeight: FontWeight.bold
-                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 13),
                   const Text(
@@ -217,34 +221,41 @@ class _LoginScreenState extends State<LoginScreen>{
                               visiblityIcon = Icons.visibility;
                             }
                             return _inputField(
-                          label: 'Password',
-                          hintText: 'Enter your password',
-                          icon: Icons.lock_outline,
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          suffix: IconButton(
-                            icon: Icon(
-                              visiblityIcon,
-                              color: Colors.grey,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
-                        );
+                              label: 'Password',
+                              hintText: 'Enter your password',
+                              icon: Icons.lock_outline,
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              suffix: IconButton(
+                                icon: Icon(visiblityIcon, color: Colors.grey),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                if (value.length < 6) {
+                                  return 'Password must be at least 6 characters';
+                                }
+                                return null;
+                              },
+                            );
                           },
                         ),
+                        if (authState.error != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            authState.error!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 13),
                         Align(
                           alignment: Alignment.centerRight,
@@ -283,9 +294,9 @@ class _LoginScreenState extends State<LoginScreen>{
                               ),
                             ),
                             contentPadding: const EdgeInsets.only(
-                              left:12,
+                              left: 12,
                               right: 12,
-                              top:4,
+                              top: 4,
                               bottom: 4,
                             ),
                           ),
@@ -295,21 +306,31 @@ class _LoginScreenState extends State<LoginScreen>{
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: _onLoginPressed,
+                            onPressed:
+                                authState.isLoading ? null : _onLoginPressed,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
                               ),
                             ),
-                            child: const Text(
-                              'Login',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: authState.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -317,7 +338,7 @@ class _LoginScreenState extends State<LoginScreen>{
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              'Don\'t have an account?',
+                              "Don't have an account?",
                               style: TextStyle(color: Colors.black),
                             ),
                             TextButton(

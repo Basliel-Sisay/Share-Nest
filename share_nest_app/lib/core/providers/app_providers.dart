@@ -13,6 +13,7 @@ import '../../data/models/resource_item.dart';
 import '../../data/repositories/loan_repository.dart';
 import '../../data/repositories/reservation_repository.dart';
 import '../../data/repositories/resource_repository.dart';
+export '../../features/auth/presentation/controllers/auth_controller.dart';
 
 final databaseHelperProvider = Provider<DatabaseHelper>(
   (ref) => DatabaseHelper.instance,

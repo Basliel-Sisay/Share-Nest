@@ -4,6 +4,7 @@ const { seed } = require('./seed');
 const resourcesRouter = require('./routes/resources');
 const loansRouter = require('./routes/loans');
 const reservationsRouter = require('./routes/reservations');
+const authRouter = require('./routes/auth');
 seed();
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,6 +15,7 @@ app.get('/api/health', (req, res) =>{
 });
 app.use('/api/resources', resourcesRouter);
 app.use('/api/loans', loansRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use((err, req, res, next) =>{
   console.error(err);

@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const db = require('./db');
 function formatReturnDate(d){
   const months = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];
@@ -80,7 +81,16 @@ function seed(){
     new Date('2026-07-14T16:00:00').toISOString(),
     '10:00 AM', '04:00 PM', '0.8 Km away', 'CONFIRMED',
   );
-  console.log('SQLite database seeded successfully');
+  const userCount = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
+if (userCount === 0) {
+  const hashed = bcrypt.hashSync('password123', 10);
+  db.prepare(
+    'INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)'
+  ).run('user-1', 'Test User', 'test@example.com', hashed);
+  console.log('Seed user created: test@example.com / password123');
+}
+
+console.log('SQLite database seeded successfully');
 }
 if (require.main === module){
   seed();

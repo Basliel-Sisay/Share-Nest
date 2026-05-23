@@ -37,6 +37,14 @@ function initSchema(){
       status_text_color INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS reservations (
       id TEXT PRIMARY KEY,
       resource_id TEXT NOT NULL,
