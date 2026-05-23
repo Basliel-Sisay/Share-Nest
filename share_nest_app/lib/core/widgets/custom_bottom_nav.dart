@@ -5,7 +5,7 @@ import '../constants/app_colors.dart';
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
 
-  const CustomBottomNav({Key? key, required this.currentIndex}) : super(key: key);
+  const CustomBottomNav({super.key, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class CustomBottomNav extends StatelessWidget {
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -56,7 +56,7 @@ class CustomBottomNav extends StatelessWidget {
                 label: 'PROFILE',
                 isActive: currentIndex == 4,
                 onTap: () {
-                  // No profile screen in requirements
+                  if (currentIndex != 4) context.go('/profile');
                 },
               ),
             ],

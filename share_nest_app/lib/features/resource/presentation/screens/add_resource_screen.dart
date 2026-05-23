@@ -3,7 +3,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 
 class AddResourceScreen extends StatelessWidget {
-  const AddResourceScreen({Key? key}) : super(key: key);
+  const AddResourceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class AddResourceScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         const Text(
                           'Upload Item Photos',
-                          style: TextStyle(fontWeight: principal, color: AppColors.textDark),
+                          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark),
                         ),
                         const SizedBox(height: 4),
                         const Text(
@@ -146,7 +146,7 @@ class AddResourceScreen extends StatelessWidget {
                         Switch(
                           value: true,
                           onChanged: (val) {},
-                          activeColor: Colors.white,
+                          activeThumbColor: Colors.white,
                           activeTrackColor: AppColors.primaryGreen,
                         ),
                       ],
@@ -203,5 +203,3 @@ class AddResourceScreen extends StatelessWidget {
     );
   }
 }
-
-const FontWeight principal = FontWeight.bold; // fix for typo in styling

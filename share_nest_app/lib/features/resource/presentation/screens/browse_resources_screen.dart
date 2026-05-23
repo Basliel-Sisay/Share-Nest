@@ -4,7 +4,7 @@ import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../widgets/resource_card.dart';
 
 class BrowseResourcesScreen extends StatelessWidget {
-  const BrowseResourcesScreen({Key? key}) : super(key: key);
+  const BrowseResourcesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

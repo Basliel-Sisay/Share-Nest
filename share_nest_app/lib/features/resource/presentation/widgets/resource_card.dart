@@ -10,14 +10,14 @@ class ResourceCard extends StatelessWidget {
   final String description;
 
   const ResourceCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.ownerName,
     required this.distance,
     required this.rating,
     required this.category,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class ResourceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

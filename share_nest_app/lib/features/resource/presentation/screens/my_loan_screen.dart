@@ -4,7 +4,7 @@ import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../widgets/loan_item_card.dart';
 
 class MyLoanScreen extends StatelessWidget {
-  const MyLoanScreen({Key? key}) : super(key: key);
+  const MyLoanScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

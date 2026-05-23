@@ -12,7 +12,7 @@ class LoanItemCard extends StatelessWidget {
   final Color statusTextColor;
 
   const LoanItemCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.ownerName,
     required this.statusText,
@@ -21,7 +21,7 @@ class LoanItemCard extends StatelessWidget {
     required this.buttonText,
     required this.statusColor,
     required this.statusTextColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class LoanItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -110,7 +110,7 @@ class LoanItemCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.lightGreen.withOpacity(0.5),
+              color: AppColors.lightGreen.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
