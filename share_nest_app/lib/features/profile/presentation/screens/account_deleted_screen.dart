@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class AccountDeletedScreen extends StatefulWidget {
+class AccountDeletedScreen extends StatelessWidget {
   const AccountDeletedScreen({super.key});
-
-  @override
-  State<AccountDeletedScreen> createState() => _AccountDeletedScreenState();
-}
-
-class _AccountDeletedScreenState extends State<AccountDeletedScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void _goHome() {
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +17,12 @@ class _AccountDeletedScreenState extends State<AccountDeletedScreen> {
               size: 100,
               color: Colors.green,
             ),
-
             const SizedBox(height: 24),
-
             const Text(
               "Account Deleted",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 12),
-
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Text(
@@ -48,21 +30,22 @@ class _AccountDeletedScreenState extends State<AccountDeletedScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
-
             const SizedBox(height: 40),
-
             Center(
               child: ElevatedButton(
-                    onPressed: _goHome,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 14,
-                      ),
-                    ),
-                    child: const Text("Return to Home", style: TextStyle(color: Colors.white)),
+                onPressed: () => context.go('/landing'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 14,
                   ),
+                ),
+                child: const Text(
+                  "Return to Home",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),
