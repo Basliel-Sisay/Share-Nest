@@ -1,14 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/providers/app_providers.dart';
 import '../widgets/resource_card.dart';
 
-class BrowseResourcesScreen extends StatelessWidget {
+class BrowseResourcesScreen extends ConsumerStatefulWidget {
   const BrowseResourcesScreen({super.key});
 
   @override
+  ConsumerState<BrowseResourcesScreen> createState() =>
+      _BrowseResourcesScreenState();
+}
+
+class _BrowseResourcesScreenState extends ConsumerState<BrowseResourcesScreen> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _openReservation(String resourceId, String title) {
+    ref.read(reservationDraftProvider.notifier).setDraft(
+          ReservationDraft(resourceId: resourceId, resourceTitle: title),
+        );
+    context.push('/reservation');
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final resourcesAsync = ref.watch(resourcesProvider);
+    final searchQuery = ref.watch(browseSearchProvider);
+    final category = ref.watch(browseCategoryProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -16,9 +43,9 @@ class BrowseResourcesScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: const [
             Row(
-              children: const [
+              children: [
                 Text(
                   'NEST_ ',
                   style: TextStyle(
@@ -30,11 +57,11 @@ class BrowseResourcesScreen extends StatelessWidget {
                 Icon(
                   Icons.eco,
                   color: Colors.black,
-                  size: 26
-                  ),
+                  size: 26,
+                ),
               ],
             ),
-            const Text(
+            Text(
               'ShareNest',
               style: TextStyle(
                 color: Colors.white,
@@ -52,34 +79,100 @@ class BrowseResourcesScreen extends StatelessWidget {
           Expanded(
             child: Container(
               color: AppColors.background,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: const [
-                  _SearchField(),
-                  SizedBox(height: 16),
-                  _CategoryList(),
-                  SizedBox(height: 24),
+              child: resourcesAsync.when(
+                loading: () =>
+                    const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(child: Text('Error: $e')),
+                data: (all) {
+                  final filtered = filterResources(
+                    all,
+                    query: searchQuery,
+                    category: category,
+                    availableOnly: false,
+                  );
 
-                  ResourceCard(
-                    title: 'Woodworking Kit',
-                    ownerName: 'Abrham Tesfaye',
-                    distance: '200m',
-                    rating: 4.9,
-                    category: 'Tools',
-                    description:
-                        'Woodworking kits, all-in-one sets that provide the essential tools and materials needed to craft, build, or repair wooden projects with ease',
-                  ),
-
-                  ResourceCard(
-                    title: 'English Text Book',
-                    ownerName: 'Sarah Kinde',
-                    distance: '1.2km',
-                    rating: 5.0,
-                    category: 'Books',
-                    description:
-                        'Grade 11 English Textbook for Ethiopian students.',
-                  ),
-                ],
+                  return ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      TextField(
+                        controller: _searchController,
+                        onChanged: (v) => ref
+                            .read(browseSearchProvider.notifier)
+                            .setQuery(v),
+                        decoration: InputDecoration(
+                          hintText: 'What do you need today?',
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: AppColors.textGrey,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.cardBlue,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _CategoryChip(
+                              title: 'All Resources',
+                              selected: category == 'All Resources',
+                              onTap: () => ref
+                                  .read(browseCategoryProvider.notifier)
+                                  .setCategory('All Resources'),
+                            ),
+                            const SizedBox(width: 8),
+                            _CategoryChip(
+                              title: 'Tools',
+                              selected: category == 'Tools',
+                              onTap: () => ref
+                                  .read(browseCategoryProvider.notifier)
+                                  .setCategory('Tools'),
+                            ),
+                            const SizedBox(width: 8),
+                            _CategoryChip(
+                              title: 'Books',
+                              selected: category == 'Books',
+                              onTap: () => ref
+                                  .read(browseCategoryProvider.notifier)
+                                  .setCategory('Books'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      if (filtered.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.all(24),
+                          child: Center(
+                            child: Text(
+                              'No resources match your search.',
+                              style: TextStyle(color: AppColors.textGrey),
+                            ),
+                          ),
+                        )
+                      else
+                        ...filtered.map(
+                          (r) => ResourceCard(
+                            title: r.title,
+                            ownerName: r.ownerName,
+                            distance: r.distance,
+                            rating: r.rating,
+                            category: r.category,
+                            description: r.description,
+                            imagePath: r.imagePath,
+                            onTap: () => context.push('/item/${r.id}'),
+                            onRequestLoan: () =>
+                                _openReservation(r.id, r.title),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -96,11 +189,7 @@ class _TopSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 16,
-        bottom: 24,
-      ),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
       color: Colors.green,
       child: const Text(
         'Explore Resources',
@@ -114,86 +203,33 @@ class _TopSection extends StatelessWidget {
   }
 }
 
-class _SearchField extends StatelessWidget {
-  const _SearchField();
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'What do you need today?',
-        prefixIcon: const Icon(
-          Icons.search,
-          color: AppColors.textGrey,
-        ),
-        filled: true,
-        fillColor: AppColors.cardBlue,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryList extends StatelessWidget {
-  const _CategoryList();
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: const [
-          _CategoryChip(
-            title: 'All Resources',
-            selected: true,
-          ),
-          SizedBox(width: 8),
-          _CategoryChip(
-            title: 'Tools',
-          ),
-          SizedBox(width: 8),
-          _CategoryChip(
-            title: 'Books',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _CategoryChip extends StatelessWidget {
-  final String title;
-  final bool selected;
-
   const _CategoryChip({
     required this.title,
-    this.selected = false,
+    required this.selected,
+    required this.onTap,
   });
+
+  final String title;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 10,
-      ),
-      decoration: BoxDecoration(
-        color: selected
-            ? AppColors.primaryGreen
-            : AppColors.cardBlue,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: selected
-              ? Colors.white
-              : AppColors.textDark,
-          fontWeight:
-              selected ? FontWeight.bold : FontWeight.normal,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primaryGreen : AppColors.cardBlue,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: selected ? Colors.white : AppColors.textDark,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
       ),
     );

@@ -5,7 +5,7 @@ import '../constants/app_colors.dart';
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
 
-  const CustomBottomNav({Key? key, required this.currentIndex}) : super(key: key);
+  const CustomBottomNav({super.key, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class CustomBottomNav extends StatelessWidget {
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black,
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -33,32 +33,32 @@ class CustomBottomNav extends StatelessWidget {
                 onTap: () {
                   if (currentIndex != 0) context.go('/home');
                 },
-                ),
-                _buildNavItem(
+              ),
+              _buildNavItem(
                 icon: Icons.search,
                 label: 'BROWSE',
                 isActive: currentIndex == 1,
                 onTap: () {
                   if (currentIndex != 1) context.go('/browse');
                 },
-                ),
-                _buildAddButton(context),
-                _buildNavItem(
+              ),
+              _buildAddButton(context),
+              _buildNavItem(
                 icon: Icons.handshake_outlined,
                 label: 'LOANS',
                 isActive: currentIndex == 3,
                 onTap: () {
                   if (currentIndex != 3) context.go('/loans');
                 },
-                ),
-                _buildNavItem(
+              ),
+              _buildNavItem(
                 icon: Icons.person_outline,
                 label: 'PROFILE',
                 isActive: currentIndex == 4,
                 onTap: () {
                   if (currentIndex != 4) context.go('/profile');
                 },
-                ),
+              ),
             ],
           ),
         ),
@@ -96,35 +96,29 @@ class CustomBottomNav extends StatelessWidget {
   }
 
   Widget _buildAddButton(BuildContext context) {
+    final isActive = currentIndex == 2;
     return GestureDetector(
       onTap: () {
         if (currentIndex != 2) context.go('/add');
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: currentIndex == 2 ? AppColors.primaryGreen : AppColors.lightGreen,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.add_circle_outline,
-              color: currentIndex == 2 ? Colors.white : AppColors.primaryGreen,
-              size: 20,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.add_circle_outline,
+            color: isActive ? AppColors.primaryGreen : AppColors.textGrey,
+            size: 24,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'ADD',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              color: isActive ? AppColors.primaryGreen : AppColors.textGrey,
             ),
-            const SizedBox(height: 2),
-            Text(
-              'ADD',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: currentIndex == 2 ? Colors.white : AppColors.primaryGreen,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

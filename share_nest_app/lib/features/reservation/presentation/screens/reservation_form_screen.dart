@@ -1,12 +1,121 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
+import 'package:intl/intl.dart';
 
-class ReservationFormScreen extends StatelessWidget {
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/providers/app_providers.dart';
+import '../../../../data/models/reservation_item.dart';
+
+class ReservationFormScreen extends ConsumerStatefulWidget {
   const ReservationFormScreen({super.key});
 
   @override
+  ConsumerState<ReservationFormScreen> createState() =>
+      _ReservationFormScreenState();
+}
+
+class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
+  DateTime _pickupDate = DateTime.now().add(const Duration(days: 1));
+  DateTime _returnDate = DateTime.now().add(const Duration(days: 2));
+  TimeOfDay _pickupTime = const TimeOfDay(hour: 10, minute: 0);
+  TimeOfDay _returnTime = const TimeOfDay(hour: 16, minute: 0);
+
+  String get _durationLabel {
+    final pickup = _dateTime(_pickupDate, _pickupTime);
+    final ret = _dateTime(_returnDate, _returnTime);
+    if (!ret.isAfter(pickup)) return 'Select valid dates';
+    final diff = ret.difference(pickup);
+    final days = diff.inDays;
+    final hours = diff.inHours % 24;
+    if (days > 0 && hours > 0) return '$days Day(s), $hours Hour(s)';
+    if (days > 0) return '$days Day(s)';
+    return '$hours Hour(s)';
+  }
+
+  DateTime _dateTime(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  Future<void> _pickDate({required bool isPickup}) async {
+    final initial = isPickup ? _pickupDate : _returnDate;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked == null) return;
+    setState(() {
+      if (isPickup) {
+        _pickupDate = picked;
+        if (!_returnDate.isAfter(_pickupDate)) {
+          _returnDate = _pickupDate.add(const Duration(days: 1));
+        }
+      } else {
+        _returnDate = picked;
+      }
+    });
+  }
+
+  Future<void> _pickTime({required bool isPickup}) async {
+    final initial = isPickup ? _pickupTime : _returnTime;
+    final picked = await showTimePicker(context: context, initialTime: initial);
+    if (picked == null) return;
+    setState(() {
+      if (isPickup) {
+        _pickupTime = picked;
+      } else {
+        _returnTime = picked;
+      }
+    });
+  }
+
+  Future<void> _confirm() async {
+    final draft = ref.read(reservationDraftProvider);
+    if (draft == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No item selected for reservation')),
+      );
+      return;
+    }
+
+    final pickup = _dateTime(_pickupDate, _pickupTime);
+    final ret = _dateTime(_returnDate, _returnTime);
+    if (!ret.isAfter(pickup)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Return date must be after pick-up date'),
+        ),
+      );
+      return;
+    }
+
+    final timeFormat = DateFormat.jm();
+    final reservation = ReservationItem(
+      id: 'res-${DateTime.now().millisecondsSinceEpoch}',
+      resourceId: draft.resourceId,
+      title: draft.resourceTitle,
+      pickupLocation: 'Pickup from community hub',
+      pickupDate: pickup,
+      returnDate: ret,
+      pickupTime: timeFormat.format(pickup),
+      returnTime: timeFormat.format(ret),
+    );
+
+    await ref.read(reservationsProvider.notifier).addReservation(reservation);
+    ref.read(reservationDraftProvider.notifier).clear();
+
+    if (!mounted) return;
+    context.push('/reservation-confirmation');
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final draft = ref.watch(reservationDraftProvider);
+    final dateFormat = DateFormat('MMM d, yyyy');
+    final timeFormat = DateFormat.jm();
+
     return Scaffold(
       backgroundColor: Colors.black54,
       body: Center(
@@ -40,7 +149,9 @@ class ReservationFormScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Check availability and confirm your slot',
+                            draft != null
+                                ? draft.resourceTitle
+                                : 'Check availability and confirm your slot',
                             style: TextStyle(
                               fontSize: 14,
                               color: AppColors.textGrey.withValues(alpha: 0.8),
@@ -60,7 +171,11 @@ class ReservationFormScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined, color: AppColors.primaryGreen, size: 20),
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      color: AppColors.primaryGreen,
+                      size: 20,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'Select Duration',
@@ -75,19 +190,35 @@ class ReservationFormScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 _buildLabel('PICK-UP DATE'),
                 const SizedBox(height: 8),
-                _buildTextField('Oct 24, 2023', Icons.calendar_today_outlined),
+                _buildPickerField(
+                  dateFormat.format(_pickupDate),
+                  Icons.calendar_today_outlined,
+                  () => _pickDate(isPickup: true),
+                ),
                 const SizedBox(height: 16),
                 _buildLabel('PICK-UP TIME'),
                 const SizedBox(height: 8),
-                _buildTextField('10:00 AM', Icons.access_time),
+                _buildPickerField(
+                  timeFormat.format(_dateTime(_pickupDate, _pickupTime)),
+                  Icons.access_time,
+                  () => _pickTime(isPickup: true),
+                ),
                 const SizedBox(height: 16),
                 _buildLabel('RETURN DATE'),
                 const SizedBox(height: 8),
-                _buildTextField('Oct 25, 2023', Icons.calendar_today_outlined),
+                _buildPickerField(
+                  dateFormat.format(_returnDate),
+                  Icons.calendar_today_outlined,
+                  () => _pickDate(isPickup: false),
+                ),
                 const SizedBox(height: 16),
                 _buildLabel('RETURN TIME'),
                 const SizedBox(height: 8),
-                _buildTextField('04:00 PM', Icons.access_time),
+                _buildPickerField(
+                  timeFormat.format(_dateTime(_returnDate, _returnTime)),
+                  Icons.access_time,
+                  () => _pickTime(isPickup: false),
+                ),
                 const SizedBox(height: 24),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -114,12 +245,13 @@ class ReservationFormScreen extends StatelessWidget {
                             'Estimated Duration',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.textGrey.withValues(alpha: 0.8),
+                              color:
+                                  AppColors.textGrey.withValues(alpha: 0.8),
                             ),
                           ),
-                          const Text(
-                            '1 Day, 6 Hours',
-                            style: TextStyle(
+                          Text(
+                            _durationLabel,
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textDark,
@@ -134,9 +266,7 @@ class ReservationFormScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.push('/reservation-confirmation');
-                    },
+                    onPressed: _confirm,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -188,28 +318,33 @@ class ReservationFormScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(String hint, IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardBlue,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: TextField(
-        readOnly: true,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(
-            color: AppColors.textDark,
-            fontSize: 14,
-          ),
-          suffixIcon: Icon(icon, color: AppColors.textDark.withValues(alpha: 0.6), size: 20),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  Widget _buildPickerField(String value, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.cardBlue,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                value,
+                style: const TextStyle(
+                  color: AppColors.textDark,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Icon(
+              icon,
+              color: AppColors.textDark.withValues(alpha: 0.6),
+              size: 20,
+            ),
+          ],
         ),
       ),
     );

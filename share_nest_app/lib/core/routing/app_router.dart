@@ -50,7 +50,6 @@ class AppRouter {
           if (location == '/add') currentIndex = 2;
           if (location == '/loans') currentIndex = 3;
           if (location == '/profile') currentIndex = 4;
-
           return Scaffold(
             body: child,
             bottomNavigationBar: CustomBottomNav(currentIndex: currentIndex),
@@ -85,9 +84,12 @@ class AppRouter {
         builder: (context, state) => const HistoryScreen(),
       ),
       GoRoute(
-        path: '/item',
+        path: '/item/:id',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const ItemDetailScreen(),
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ItemDetailScreen(resourceId: id);
+        },
       ),
       GoRoute(
         path: '/settings',

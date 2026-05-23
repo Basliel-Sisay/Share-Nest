@@ -73,7 +73,7 @@ class ReservationConfirmationScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    context.go('/');
+                    context.go('/home');
                   },
                   icon: const Icon(Icons.home_outlined, size: 20),
                   label: const Text(
