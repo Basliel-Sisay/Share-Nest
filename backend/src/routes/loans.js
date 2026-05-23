@@ -18,11 +18,18 @@ function formatReturnDate(iso) {
 }
 
 router.get('/', authenticate, (req, res) => {
-  const rows = db
-    .prepare(
-      'SELECT * FROM loans WHERE owner_id = ? OR borrower_id = ? ORDER BY created_at DESC'
-    )
-    .all(req.userId, req.userId);
+  let rows;
+  if (req.userRole === 'admin') {
+    rows = db
+      .prepare('SELECT * FROM loans ORDER BY created_at DESC')
+      .all();
+  } else {
+    rows = db
+      .prepare(
+        'SELECT * FROM loans WHERE owner_id = ? OR borrower_id = ? ORDER BY created_at DESC'
+      )
+      .all(req.userId, req.userId);
+  }
   res.json(rows);
 });
 
@@ -72,7 +79,7 @@ router.post('/', authenticate, (req, res) => {
 
 router.patch('/:id/status', authenticate, (req, res) => {
   const { status } = req.body;
-  const validStatuses = ['APPROVED', 'REJECTED', 'RETURNED', 'CANCELLED', 'ACTIVE'];
+  const validStatuses = ['APPROVED', 'REJECTED', 'RETURNED', 'CANCELLED', 'ACTIVE', 'CONFIRMED'];
   if (!validStatuses.includes(status)) {
     return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
   }
@@ -80,9 +87,9 @@ router.patch('/:id/status', authenticate, (req, res) => {
   const loan = db.prepare('SELECT * FROM loans WHERE id = ?').get(req.params.id);
   if (!loan) return res.status(404).json({ error: 'Loan not found' });
 
-  if (status === 'APPROVED' || status === 'REJECTED') {
-    if (loan.owner_id !== req.userId) {
-      return res.status(403).json({ error: 'Only the resource owner can approve or reject' });
+  if (status === 'APPROVED' || status === 'REJECTED' || status === 'CONFIRMED') {
+    if (loan.owner_id !== req.userId && req.userRole !== 'admin') {
+      return res.status(403).json({ error: 'Only the resource owner or admin can approve or reject' });
     }
   }
   if (status === 'CANCELLED') {
@@ -98,6 +105,7 @@ router.patch('/:id/status', authenticate, (req, res) => {
 
   const colorMap = {
     APPROVED: { color: 0xFF4CAF50, textColor: 0xFFFFFFFF },
+    CONFIRMED: { color: 0xFF4CAF50, textColor: 0xFFFFFFFF },
     REJECTED: { color: 0xFFF44336, textColor: 0xFFFFFFFF },
     RETURNED: { color: 0xFF9E9E9E, textColor: 0xFFFFFFFF },
     CANCELLED: { color: 0xFFFF9800, textColor: 0xFFFFFFFF },
@@ -109,10 +117,10 @@ router.patch('/:id/status', authenticate, (req, res) => {
     `UPDATE loans SET status_text = ?, status_color = ?, status_text_color = ? WHERE id = ?`
   ).run(status, c.color, c.textColor, req.params.id);
 
-  if (status === 'APPROVED') {
+  if (status === 'APPROVED' || status === 'CONFIRMED') {
     db.prepare('UPDATE resources SET is_available = 0 WHERE id = ?').run(loan.resource_id);
   }
-  if (status === 'RETURNED' || status === 'CANCELLED') {
+  if (status === 'RETURNED' || status === 'CANCELLED' || status === 'REJECTED') {
     db.prepare('UPDATE resources SET is_available = 1 WHERE id = ?').run(loan.resource_id);
   }
 
