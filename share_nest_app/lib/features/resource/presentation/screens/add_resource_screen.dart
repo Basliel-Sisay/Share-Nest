@@ -10,7 +10,9 @@ import '../../../../core/providers/app_providers.dart';
 import '../../../../data/models/resource_item.dart';
 
 class AddResourceScreen extends ConsumerStatefulWidget {
-  const AddResourceScreen({super.key});
+  const AddResourceScreen({super.key, this.editResourceId});
+
+  final String? editResourceId;
 
   @override
   ConsumerState<AddResourceScreen> createState() => _AddResourceScreenState();
@@ -26,6 +28,32 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
   String? _imagePath;
   bool _isAvailable = true;
   bool _isSaving = false;
+  ResourceItem? _editItem;
+  bool _isLoadingEdit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editResourceId != null) {
+      _loadEditResource();
+    }
+  }
+
+  Future<void> _loadEditResource() async {
+    setState(() => _isLoadingEdit = true);
+    final repo = ref.read(resourceRepositoryProvider);
+    final item = await repo.getResourceById(widget.editResourceId!);
+    if (item != null && mounted) {
+      _editItem = item;
+      _nameController.text = item.title;
+      _categoryController.text = item.category;
+      _conditionController.text = item.condition;
+      _descriptionController.text = item.description;
+      _imagePath = item.imagePath.startsWith('assets/') ? null : item.imagePath;
+      _isAvailable = item.isAvailable;
+    }
+    if (mounted) setState(() => _isLoadingEdit = false);
+  }
 
   @override
   void dispose() {
@@ -89,27 +117,31 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
     setState(() => _isSaving = true);
 
     final user = ref.read(authProvider).user;
-    final id = slugifyTitle(title);
+    final id = _editItem?.id ?? slugifyTitle(title);
     final item = ResourceItem(
       id: id,
       title: title,
-      ownerId: user?.id ?? '',
-      ownerName: 'You',
-      distance: 'Nearby',
-      rating: 5.0,
+      ownerId: _editItem?.ownerId ?? user?.id ?? '',
+      ownerName: _editItem?.ownerName ?? user?.name ?? 'You',
+      distance: _editItem?.distance ?? 'Nearby',
+      rating: _editItem?.rating ?? 5.0,
       category: _normalizeCategory(_categoryController.text),
       description: _descriptionController.text.trim().isEmpty
           ? 'Shared by community member.'
           : _descriptionController.text.trim(),
-      imagePath: _imagePath ?? 'assets/images/drill.png',
-      location: 'Your neighborhood',
+      imagePath: _imagePath ?? _editItem?.imagePath ?? 'assets/images/drill.png',
+      location: _editItem?.location ?? 'Your neighborhood',
       condition: _conditionController.text.trim(),
       isAvailable: _isAvailable,
       statusText: _isAvailable ? 'Available Today' : 'Unavailable',
     );
 
     try {
-      await ref.read(resourcesProvider.notifier).addResource(item);
+      if (_editItem != null) {
+        await ref.read(resourcesProvider.notifier).updateResource(item);
+      } else {
+        await ref.read(resourcesProvider.notifier).addResource(item);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
@@ -121,7 +153,7 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
 
     if (!mounted) return;
     setState(() => _isSaving = false);
-    context.go('/home');
+    context.pop();
   }
 
   @override
@@ -158,11 +190,13 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
+      body: _isLoadingEdit
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const _HeaderSection(),
+            _HeaderSection(isEditing: _editItem != null),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -320,7 +354,7 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            _isSaving ? 'Saving...' : 'Add Resource',
+                            _isSaving ? 'Saving...' : _editItem != null ? 'Update Resource' : 'Add Resource',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -359,7 +393,9 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
 }
 
 class _HeaderSection extends StatelessWidget {
-  const _HeaderSection();
+  const _HeaderSection({this.isEditing = false});
+
+  final bool isEditing;
 
   @override
   Widget build(BuildContext context) {
@@ -367,21 +403,23 @@ class _HeaderSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
       color: Colors.green,
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Share a Resource',
-            style: TextStyle(
+            isEditing ? 'Edit Resource' : 'Share a Resource',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            "When you share your items, you're helping the whole community grow stronger. Go ahead and list yours below",
-            style: TextStyle(color: Colors.white70, fontSize: 14),
+            isEditing
+                ? "Update your resource details below."
+                : "When you share your items, you're helping the whole community grow stronger. Go ahead and list yours below",
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
         ],
       ),

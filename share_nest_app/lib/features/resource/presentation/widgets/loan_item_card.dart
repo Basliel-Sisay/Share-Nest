@@ -5,6 +5,8 @@ import '../../../../core/constants/app_colors.dart';
 class LoanItemCard extends StatelessWidget {
   final String title;
   final String ownerName;
+  final String borrowerName;
+  final bool isOwner;
   final String statusText;
   final String dateText;
   final String buttonText;
@@ -16,6 +18,8 @@ class LoanItemCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.ownerName,
+    this.borrowerName = '',
+    this.isOwner = false,
     required this.statusText,
     required this.dateText,
     required this.buttonText,
@@ -102,7 +106,9 @@ class LoanItemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Borrowed from $ownerName',
+                      isOwner
+                          ? 'Lent to ${borrowerName.isNotEmpty ? borrowerName : "someone"}'
+                          : 'Borrowed from $ownerName',
                       style: const TextStyle(
                         color: AppColors.textGrey,
                         fontSize: 12,

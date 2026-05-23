@@ -8,7 +8,7 @@ class HistoryItemTile extends StatelessWidget {
     required this.period,
     required this.stateLabel,
     required this.stateColor,
-    required this.imagePath,
+    this.imagePath,
   });
 
   final String itemName;
@@ -16,7 +16,7 @@ class HistoryItemTile extends StatelessWidget {
   final String period;
   final String stateLabel;
   final Color stateColor;
-  final String imagePath;
+  final String? imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,19 @@ class HistoryItemTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(2),
-            child: Image.asset(
-              imagePath,
-              height: 60,
-              width: 72,
-              fit: BoxFit.cover,
-            ),
+            child: imagePath != null
+                ? Image.asset(
+                    imagePath!,
+                    height: 60,
+                    width: 72,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    height: 60,
+                    width: 72,
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.inventory_2, color: Colors.grey),
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(

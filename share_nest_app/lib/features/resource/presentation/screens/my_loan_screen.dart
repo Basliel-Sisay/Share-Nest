@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../../../../data/models/loan_item.dart';
+import '../../../../data/models/reservation_item.dart';
 import '../widgets/loan_item_card.dart';
 
 class MyLoanScreen extends ConsumerStatefulWidget {
@@ -80,22 +81,84 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
     await ref.read(reservationsProvider.notifier).deleteReservation(id);
   }
 
-  void _showLoanActions(LoanItem loan, String currentUserId) {
-    final isOwner = loan.ownerId == currentUserId;
-    final isBorrower = loan.borrowerId == currentUserId;
+  Future<void> _confirmReservation(String id) async {
+    try {
+      final api = ref.read(apiClientProvider);
+      await api.patch('/api/reservations/$id/status', {'status': 'CONFIRMED'});
+      await ref.read(reservationsProvider.notifier).deleteReservation(id); // force refresh
+      ref.invalidate(reservationsProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reservation confirmed')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed: $e')),
+      );
+    }
+  }
+
+  void _showReservationActions(ReservationItem r, String currentUserId, String currentUserRole) {
+    final isOwner = r.ownerId == currentUserId;
+    final isAdmin = currentUserRole == 'admin';
 
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
         child: Wrap(
           children: [
-            if (loan.isPending && isOwner) ...[
+            if (r.isPending && (isOwner || isAdmin)) ...[
               ListTile(
                 leading: const Icon(Icons.check_circle, color: Colors.green),
-                title: const Text('Approve'),
+                title: const Text('Confirm Reservation'),
                 onTap: () {
                   Navigator.pop(ctx);
-                  _updateLoanStatus(loan.id, 'APPROVED');
+                  _confirmReservation(r.id);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.cancel, color: Colors.red),
+                title: const Text('Reject Reservation'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _cancelReservation(r.id);
+                },
+              ),
+            ],
+            if (r.isPending || r.isConfirmed) ...[
+              ListTile(
+                leading: const Icon(Icons.cancel_outlined, color: Colors.orange),
+                title: const Text('Cancel'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _cancelReservation(r.id);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLoanActions(LoanItem loan, String currentUserId, String currentUserRole) {
+    final isOwner = loan.ownerId == currentUserId;
+    final isBorrower = loan.borrowerId == currentUserId;
+    final isAdmin = currentUserRole == 'admin';
+
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            if (loan.isPending && (isOwner || isAdmin)) ...[
+              ListTile(
+                leading: const Icon(Icons.check_circle, color: Colors.green),
+                title: const Text('Confirm'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _updateLoanStatus(loan.id, 'CONFIRMED');
                 },
               ),
               ListTile(
@@ -107,7 +170,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 },
               ),
             ],
-            if ((loan.isPending || loan.isApproved) && (isBorrower || isOwner)) ...[
+            if ((loan.isPending || loan.isApproved || loan.isActive) && (isBorrower || isOwner || isAdmin)) ...[
               ListTile(
                 leading: const Icon(Icons.cancel_outlined, color: Colors.orange),
                 title: const Text('Cancel'),
@@ -117,7 +180,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 },
               ),
             ],
-            if (loan.isActive && isOwner) ...[
+            if (loan.isActive && (isOwner || isAdmin)) ...[
               ListTile(
                 leading: const Icon(Icons.check_circle_outline, color: Colors.grey),
                 title: const Text('Mark as Returned'),
@@ -127,7 +190,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 },
               ),
             ],
-            if (loan.isActive || loan.isApproved) ...[
+            if (loan.isActive || loan.isApproved || loan.isExtended) ...[
               ListTile(
                 leading: const Icon(Icons.update, color: Colors.blue),
                 title: const Text('Extend Loan'),
@@ -137,7 +200,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 },
               ),
             ],
-            if (!loan.isPending && !loan.isApproved && !loan.isActive) ...[
+            if (!loan.isPending && !loan.isApproved && !loan.isActive && !loan.isExtended) ...[
               ListTile(
                 leading: const Icon(Icons.info_outline, color: Colors.grey),
                 title: const Text('No actions available'),
@@ -298,6 +361,8 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                               (loan) => LoanItemCard(
                                 title: loan.title,
                                 ownerName: loan.ownerName,
+                                borrowerName: loan.borrowerName,
+                                isOwner: currentUser?.id == loan.ownerId,
                                 statusText: loan.statusText,
                                 dateText: loan.dateText,
                                 buttonText: 'Manage',
@@ -306,7 +371,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                                     Color(loan.statusTextColorArgb),
                                 onButtonPressed: () {
                                   if (currentUser != null) {
-                                    _showLoanActions(loan, currentUser.id);
+                                    _showLoanActions(loan, currentUser.id, currentUser.role);
                                   }
                                 },
                               ),
@@ -351,6 +416,9 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                                 onCancel: r.isPending || r.isConfirmed
                                     ? () => _cancelReservation(r.id)
                                     : null,
+                                onManage: (currentUser != null && (r.ownerId == currentUser.id || currentUser.role == 'admin') && r.isPending)
+                                    ? () => _showReservationActions(r, currentUser.id, currentUser.role)
+                                    : null,
                               ),
                             ),
                           ],
@@ -378,7 +446,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                             style: TextStyle(color: AppColors.textGrey),
                           );
                         }
-                        final r = reservations.first;
+                          final r = reservations.first;
                         return _ReservationCard(
                           title: r.title,
                           status: r.status,
@@ -389,6 +457,9 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                               context.push('/item/${r.resourceId}'),
                           onCancel: r.isPending || r.isConfirmed
                               ? () => _cancelReservation(r.id)
+                              : null,
+                          onManage: (currentUser != null && (r.ownerId == currentUser.id || currentUser.role == 'admin') && r.isPending)
+                              ? () => _showReservationActions(r, currentUser.id, currentUser.role)
                               : null,
                         );
                       },
@@ -413,6 +484,7 @@ class _ReservationCard extends StatelessWidget {
     required this.distance,
     required this.onViewDetails,
     this.onCancel,
+    this.onManage,
   });
 
   final String title;
@@ -422,6 +494,7 @@ class _ReservationCard extends StatelessWidget {
   final String distance;
   final VoidCallback onViewDetails;
   final VoidCallback? onCancel;
+  final VoidCallback? onManage;
 
   @override
   Widget build(BuildContext context) {
@@ -526,6 +599,16 @@ class _ReservationCard extends StatelessWidget {
                     onPressed: onCancel,
                     style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
                     child: const Text('Cancel'),
+                  ),
+                ),
+              ],
+              if (onManage != null) ...[
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: onManage,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    child: const Text('Manage', style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
