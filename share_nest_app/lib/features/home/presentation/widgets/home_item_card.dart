@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/resource_image.dart';
+
 class HomeItemCard extends StatelessWidget {
   const HomeItemCard({
     super.key,
@@ -11,6 +13,7 @@ class HomeItemCard extends StatelessWidget {
     required this.imagePath,
     this.isActionPrimary = true,
     required this.onTap,
+    this.onActionTap,
   });
 
   final String title;
@@ -21,78 +24,95 @@ class HomeItemCard extends StatelessWidget {
   final String imagePath;
   final bool isActionPrimary;
   final VoidCallback onTap;
+  final VoidCallback? onActionTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(18),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 228, 233, 242),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 228, 233, 242),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(8),
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                imagePath,
-                height: 118,
+              child: SizedBox(
+                height: 88,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                child: ResourceImage(path: imagePath, fit: BoxFit.contain),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14.5,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 21, 34, 51),
-              ),
-            ),
-            const SizedBox(height: 7),
-            Row(
+          ),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: onTap,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
-                  radius: 9,
-                  backgroundColor: Color.fromARGB(255, 122, 199, 94),
-                  child: Icon(Icons.person, size: 12, color: Color.fromARGB(255, 19, 67, 27)),
-                ),
-                const SizedBox(width: 6),
                 Text(
-                  '$owner  •  $distance away',
-                  style:
-                      const TextStyle(fontSize: 12, color: Color.fromARGB(255, 91, 102, 115)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 9),
-            Row(
-              children: [
-                Icon(
-                  isActionPrimary
-                      ? Icons.check_circle_outline
-                      : Icons.event_available,
-                  size: 16,
-                  color: const Color.fromARGB(255, 29, 158, 79),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  status,
+                  title,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 29, 158, 79),
+                    color: Color.fromARGB(255, 21, 34, 51),
                   ),
                 ),
+                const SizedBox(height: 7),
+                Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 9,
+                      backgroundColor: Color.fromARGB(255, 122, 199, 94),
+                      child: Icon(
+                        Icons.person,
+                        size: 12,
+                        color: Color.fromARGB(255, 19, 67, 27),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$owner  •  $distance away',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 91, 102, 115),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 9),
+                Row(
+                  children: [
+                    Icon(
+                      isActionPrimary
+                          ? Icons.check_circle_outline
+                          : Icons.event_available,
+                      size: 16,
+                      color: const Color.fromARGB(255, 29, 158, 79),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      status,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 29, 158, 79),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 10),
-            Container(
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: onActionTap ?? onTap,
+            child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
@@ -112,8 +132,8 @@ class HomeItemCard extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

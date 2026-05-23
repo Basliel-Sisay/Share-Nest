@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/app_providers.dart';
 import '../widgets/home_item_card.dart';
 import '../widgets/home_search_bar.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
+  void _openReservation(
+    BuildContext context,
+    WidgetRef ref, {
+    required String resourceId,
+    required String title,
+  }) {
+    ref.read(reservationDraftProvider.notifier).setDraft(
+          ReservationDraft(
+            resourceId: resourceId,
+            resourceTitle: title,
+          ),
+        );
+    context.push('/reservation');
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final resourcesAsync = ref.watch(resourcesProvider);
+    final searchQuery = ref.watch(homeSearchProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -16,9 +36,9 @@ class HomeScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: const [
             Row(
-              children: const [
+              children: [
                 Text(
                   'NEST_ ',
                   style: TextStyle(
@@ -30,11 +50,11 @@ class HomeScreen extends StatelessWidget {
                 Icon(
                   Icons.eco,
                   color: Colors.black,
-                  size: 26
-                  ),
+                  size: 26,
+                ),
               ],
             ),
-            const Text(
+            Text(
               'ShareNest',
               style: TextStyle(
                 color: Colors.white,
@@ -46,63 +66,91 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              const Text(
-                'What do you need for your today?',
-                style: TextStyle(fontSize: 17, color: Color.fromARGB(255, 45, 55, 66)),
-              ),
-              const SizedBox(height: 14),
-              const HomeSearchBar(),
-              const SizedBox(height: 26),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: resourcesAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('Error: $e')),
+          data: (allResources) {
+            final featured = filterResources(
+              allResources,
+              query: searchQuery,
+              category: 'All Resources',
+              availableOnly: true,
+            );
+
+            final nearYou = featured.isNotEmpty
+                ? featured
+                : allResources.where((r) => r.isAvailable).toList();
+
+            if (nearYou.isEmpty) {
+              return const Center(child: Text('No resources available yet.'));
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 10),
                   const Text(
-                    'Available Near You',
+                    'What do you need for your today?',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Color.fromARGB(255, 21, 34, 51),
+                      fontSize: 17,
+                      color: Color.fromARGB(255, 45, 55, 66),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      context.go('/browse');
-                    },
-                    child: const Text('View all →'),
+                  const SizedBox(height: 14),
+                  const HomeSearchBar(),
+                  const SizedBox(height: 26),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Available Near You',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Color.fromARGB(255, 21, 34, 51),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => context.go('/browse'),
+                        child: const Text('View all →'),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 8),
+                  ...nearYou.map((resource) {
+                    final isPrimary = resource.category == 'Tools';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: HomeItemCard(
+                        title: resource.title,
+                        owner: resource.ownerName,
+                        distance: resource.distance,
+                        status: resource.statusText,
+                        actionText: isPrimary ? 'Request Loan' : 'Pre-book',
+                        imagePath: resource.imagePath,
+                        isActionPrimary: isPrimary,
+                        onTap: () => context.push('/item/${resource.id}'),
+                        onActionTap: () {
+                          if (isPrimary) {
+                            _openReservation(
+                              context,
+                              ref,
+                              resourceId: resource.id,
+                              title: resource.title,
+                            );
+                          } else {
+                            context.push('/item/${resource.id}');
+                          }
+                        },
+                      ),
+                    );
+                  }),
                 ],
               ),
-              const SizedBox(height: 8),
-              HomeItemCard(
-                title: 'Power Drill',
-                owner: 'Mike R.',
-                distance: '0.8 miles',
-                status: 'Available Today',
-                actionText: 'Request Loan',
-                imagePath: 'assets/images/drill.png',
-                onTap: () => context.push('/item'),
-              ),
-              const SizedBox(height: 16),
-              HomeItemCard(
-                title: 'Python Programming',
-                owner: 'Sarah W.',
-                distance: '1.2 miles',
-                status: 'Free from Mar 15',
-                actionText: 'Pre-book',
-                imagePath: 'assets/images/python_book.png',
-                isActionPrimary: false,
-                onTap: () {
-                  context.push('/item');
-                },
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

@@ -1,13 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/providers/app_providers.dart';
 import '../widgets/loan_item_card.dart';
 
-class MyLoanScreen extends StatelessWidget {
-  const MyLoanScreen({Key? key}) : super(key: key);
+class MyLoanScreen extends ConsumerStatefulWidget {
+  const MyLoanScreen({super.key});
+
+  @override
+  ConsumerState<MyLoanScreen> createState() => _MyLoanScreenState();
+}
+
+class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
+  int _tabIndex = 0;
+
+  Future<void> _extendLoan(String loanId, DateTime currentReturn) async {
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: currentReturn.add(const Duration(days: 3)),
+      firstDate: currentReturn,
+      lastDate: currentReturn.add(const Duration(days: 90)),
+    );
+    if (newDate == null || !mounted) return;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(currentReturn),
+    );
+    if (time == null) return;
+
+    final extended = DateTime(
+      newDate.year,
+      newDate.month,
+      newDate.day,
+      time.hour,
+      time.minute,
+    );
+
+    await ref.read(loansProvider.notifier).extendLoan(loanId, extended);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Loan extended to ${DateFormat('MMMM d, h:mm a').format(extended)}',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final loansAsync = ref.watch(loansProvider);
+    final reservationsAsync = ref.watch(reservationsProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -15,9 +64,9 @@ class MyLoanScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: const [
             Row(
-              children: const [
+              children: [
                 Text(
                   'NEST_ ',
                   style: TextStyle(
@@ -26,14 +75,10 @@ class MyLoanScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(
-                  Icons.eco,
-                  color: Colors.black,
-                  size: 26
-                  ),
+                Icon(Icons.eco, color: Colors.black, size: 26),
               ],
             ),
-            const Text(
+            Text(
               'ShareNest',
               style: TextStyle(
                 color: Colors.white,
@@ -65,10 +110,7 @@ class MyLoanScreen extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   'Track your current shares and upcoming bookings',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],
             ),
@@ -87,18 +129,26 @@ class MyLoanScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryGreen,
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Loans',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                          child: GestureDetector(
+                            onTap: () => setState(() => _tabIndex = 0),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: _tabIndex == 0
+                                    ? AppColors.primaryGreen
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Loans',
+                                  style: TextStyle(
+                                    color: _tabIndex == 0
+                                        ? Colors.white
+                                        : AppColors.textGrey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -106,13 +156,25 @@ class MyLoanScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => context.push('/reservation'),
-                            child: const Center(
-                              child: Text(
-                                'Reservations',
-                                style: TextStyle(
-                                  color: AppColors.textGrey,
-                                  fontWeight: FontWeight.bold,
+                            onTap: () => setState(() => _tabIndex = 1),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: _tabIndex == 1
+                                    ? AppColors.primaryGreen
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Reservations',
+                                  style: TextStyle(
+                                    color: _tabIndex == 1
+                                        ? Colors.white
+                                        : AppColors.textGrey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -122,123 +184,230 @@ class MyLoanScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
-                  const LoanItemCard(
-                    title: 'DeWalt Power Drill',
-                    ownerName: 'Sarah Yabets',
-                    statusText: 'DUE IN 2 DAYS',
-                    statusColor: Colors.green,
-                    statusTextColor: Colors.white,
-                    dateText: 'Return by June 24, 6:00 PM',
-                    isUpcoming: false,
-                    buttonText: 'Message Sarah',
-                  ),
-                  const LoanItemCard(
-                    title: '4 Person Camping Tent',
-                    ownerName: 'Kirubel Awoke',
-                    statusText: 'ACTIVE',
-                    statusColor: AppColors.cardBlue,
-                    statusTextColor: AppColors.primaryGreen,
-                    dateText: 'Borrowed for 4 more days',
-                    isUpcoming: false,
-                    buttonText: 'Extend Loan',
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Upcoming Reservations',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBlue,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(Icons.chair_alt_outlined, color: AppColors.textGrey, size: 40),
+                  if (_tabIndex == 0)
+                    loansAsync.when(
+                      loading: () => const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(24),
+                          child: CircularProgressIndicator(),
                         ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Event Chairs (Set of 10)',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textDark,
-                          ),
+                      ),
+                      error: (e, _) => Text('Error: $e'),
+                      data: (loans) => Column(
+                        children: loans
+                            .map(
+                              (loan) => LoanItemCard(
+                                title: loan.title,
+                                ownerName: loan.ownerName,
+                                statusText: loan.statusText,
+                                dateText: loan.dateText,
+                                buttonText: 'Extend Loan',
+                                statusColor: Color(loan.statusColorArgb),
+                                statusTextColor:
+                                    Color(loan.statusTextColorArgb),
+                                onButtonPressed: () => _extendLoan(
+                                  loan.id,
+                                  loan.returnDate,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    )
+                  else
+                    reservationsAsync.when(
+                      loading: () => const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(24),
+                          child: CircularProgressIndicator(),
                         ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.greenAccent.shade100,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            'CONFIRMED',
-                            style: TextStyle(
-                              color: AppColors.darkGreen,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Pickup from Jemo 1',
-                          style: TextStyle(
-                            color: AppColors.textGrey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                      error: (e, _) => Text('Error: $e'),
+                      data: (reservations) {
+                        if (reservations.isEmpty) {
+                          return const Text('No reservations yet.');
+                        }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.darkGreen),
-                            SizedBox(width: 4),
-                            Text('July 12 - July 14', style: TextStyle(fontSize: 12, color: AppColors.textGrey)),
-                            SizedBox(width: 12),
-                            Icon(Icons.location_on_outlined, size: 14, color: AppColors.darkGreen),
-                            SizedBox(width: 4),
-                            Text('0.8 Km away', style: TextStyle(fontSize: 12, color: AppColors.textGrey)),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text('View Details'),
+                            const Text(
+                              'Your Reservations',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textDark,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.more_vert),
+                            const SizedBox(height: 16),
+                            ...reservations.map(
+                              (r) => _ReservationCard(
+                                title: r.title,
+                                status: r.status,
+                                location: r.pickupLocation,
+                                dateRange: r.dateRangeLabel,
+                                distance: r.distance,
+                                onViewDetails: () =>
+                                    context.push('/item/${r.resourceId}'),
+                              ),
                             ),
                           ],
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  ),
+                  if (_tabIndex == 0) ...[
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Upcoming Reservations',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textDark,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    reservationsAsync.when(
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, _) => const SizedBox.shrink(),
+                      data: (reservations) {
+                        if (reservations.isEmpty) {
+                          return const Text(
+                            'No upcoming reservations.',
+                            style: TextStyle(color: AppColors.textGrey),
+                          );
+                        }
+                        final r = reservations.first;
+                        return _ReservationCard(
+                          title: r.title,
+                          status: r.status,
+                          location: r.pickupLocation,
+                          dateRange: r.dateRangeLabel,
+                          distance: r.distance,
+                          onViewDetails: () =>
+                              context.push('/item/${r.resourceId}'),
+                        );
+                      },
+                    ),
+                  ],
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReservationCard extends StatelessWidget {
+  const _ReservationCard({
+    required this.title,
+    required this.status,
+    required this.location,
+    required this.dateRange,
+    required this.distance,
+    required this.onViewDetails,
+  });
+
+  final String title;
+  final String status;
+  final String location;
+  final String dateRange;
+  final String distance;
+  final VoidCallback onViewDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: AppColors.cardBlue,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.chair_alt_outlined,
+              color: AppColors.textGrey,
+              size: 40,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textDark,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.greenAccent.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              status,
+              style: const TextStyle(
+                color: AppColors.darkGreen,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            location,
+            style: const TextStyle(color: AppColors.textGrey, fontSize: 14),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.calendar_today_outlined,
+                size: 14,
+                color: AppColors.darkGreen,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                dateRange,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textGrey,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Icon(
+                Icons.location_on_outlined,
+                size: 14,
+                color: AppColors.darkGreen,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                distance,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textGrey,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onViewDetails,
+              child: const Text('View Details'),
             ),
           ),
         ],

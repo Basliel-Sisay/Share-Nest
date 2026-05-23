@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/constants/app_colors.dart';
 
 class LoanItemCard extends StatelessWidget {
@@ -6,22 +7,22 @@ class LoanItemCard extends StatelessWidget {
   final String ownerName;
   final String statusText;
   final String dateText;
-  final bool isUpcoming;
   final String buttonText;
   final Color statusColor;
   final Color statusTextColor;
+  final VoidCallback onButtonPressed;
 
   const LoanItemCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.ownerName,
     required this.statusText,
     required this.dateText,
-    required this.isUpcoming,
     required this.buttonText,
     required this.statusColor,
     required this.statusTextColor,
-  }) : super(key: key);
+    required this.onButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class LoanItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -53,7 +54,10 @@ class LoanItemCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
-                  child: Icon(Icons.image_outlined, color: AppColors.textGrey),
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: AppColors.textGrey,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -77,7 +81,10 @@ class LoanItemCard extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: statusColor,
                             borderRadius: BorderRadius.circular(12),
@@ -110,12 +117,16 @@ class LoanItemCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.lightGreen.withOpacity(0.5),
+              color: AppColors.lightGreen.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.darkGreen),
+                const Icon(
+                  Icons.calendar_today_outlined,
+                  size: 14,
+                  color: AppColors.darkGreen,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   dateText,
@@ -132,10 +143,10 @@ class LoanItemCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: onButtonPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isUpcoming ? AppColors.primaryGreen : AppColors.cardBlue,
-                foregroundColor: isUpcoming ? Colors.white : AppColors.darkGreen,
+                backgroundColor: AppColors.cardBlue,
+                foregroundColor: AppColors.darkGreen,
                 elevation: 0,
               ),
               child: Text(buttonText),
