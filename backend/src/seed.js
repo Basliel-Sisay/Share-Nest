@@ -2,10 +2,7 @@ const bcrypt = require('bcrypt');
 const db = require('./db');
 
 function formatReturnDate(d) {
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
+  const months = [ 'January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];
   return 'Return by ' + months[d.getMonth()] + ' ' + d.getDate() + ', 6:00 PM';
 }
 
@@ -29,11 +26,9 @@ function seed() {
   }
 
   const resourceCount = db.prepare('SELECT COUNT(*) AS c FROM resources').get().c;
-  if (resourceCount > 0) {
-    console.log('Database already seeded.');
-    return;
-  }
-
+  // Clear resources to ensure updated paths and order are applied
+  db.prepare('DELETE FROM resources').run();
+  
   const insertResource = db.prepare(
     `INSERT INTO resources (
       id, title, owner_id, owner_name, distance, rating, category, description,
@@ -42,28 +37,41 @@ function seed() {
   );
 
   const resources = [
-    ['power-drill', 'Power Drill', 'user-1', 'Mike R.', '0.8 miles', 4.8, 'Tools',
+    ['woodworking-kit', 'Woodworking Kit', 'user-1', 'Abrham Tesfaye', '200m', 4.9, 'Tools',
+      'Woodworking kits with essential tools for wooden projects.',
+      'assets/images/wood kit.jpg', 'Mekanissa', 'Good condition',
+      'Available Today', 1],
+    ['power-drill', 'Power Drill', 'user-1', 'Tinsae Getaneh', '0.8 miles', 4.8, 'Tools',
       'Compact Drill for everyday wall drilling and light home projects.',
       'assets/images/drill.png', 'Jemo, Mekanissa',
       'Includes 2 rechargeable batteries. Charger and carrying case included.',
+      'Available Today', 1],
+    ['kitchen-set-kit', 'Kitchen Set Kit', 'user-1', 'Sarah Kinde', '1.2km', 5.0, 'Kitchen',
+      'A complete kitchen set kit for all your cooking needs.',
+      'assets/images/kitchen kits.jpg', 'Jemo', 'Excellent condition',
       'Available Today', 1],
     ['python-programming', 'Python Programming', 'user-1', 'Sarah W.', '1.2 miles', 4.9, 'Books',
       'Comprehensive Python programming guide covering fundamentals and projects.',
       'assets/images/python_book.png', 'Bole, Addis Ababa', 'Gently used.',
       'Free from Mar 15', 1],
-    ['woodworking-kit', 'Woodworking Kit', 'user-1', 'Abrham Tesfaye', '200m', 4.9, 'Tools',
-      'Woodworking kits with essential tools for wooden projects.',
-      'assets/images/drill.png', 'Mekanissa', 'Good condition',
-      'Available Today', 1],
     ['english-textbook', 'English Text Book', 'user-1', 'Sarah Kinde', '1.2km', 5.0, 'Books',
       'Grade 11 English Textbook for Ethiopian students.',
-      'assets/images/python_book.png', 'Jemo', 'Like new',
+      'assets/images/english.jpg', 'Jemo', 'Like new',
       'Available Today', 1],
-    ['event-chairs', 'Event Chairs (Set of 10)', 'user-1', 'Community Hub', '0.8 Km', 4.7, 'Tools',
+    ['book-of-daniel', 'Book of Daniel', 'user-1', 'Sarah W.', '1.5 miles', 4.9, 'Books',
+      'The Book of Daniel from the Bible, explore ancient prophecy.',
+      'assets/images/book_of_daniel.jpg', 'Bole', 'Good condition',
+      'Available Today', 1],
+    ['book-of-moses', 'Book of Moses', 'user-1', 'Sarah W.', '1.6 miles', 4.8, 'Books',
+      'The Book of Moses, part of the Pearl of Great Price.',
+      'assets/images/book of moses.jpg', 'Bole', 'Well preserved',
+      'Available Today', 1],
+    ['event-chairs', 'Event Chairs (Set of 10)', 'user-1', 'Community Hub', '0.8 Km', 4.7, 'Furniture',
       'Set of 10 folding event chairs for parties and gatherings.',
-      'assets/images/drill.png', 'Jemo 1', '',
+      'assets/images/plastic chairs.jpg', 'Jemo 1', 'Clean and sturdy',
       'Available Today', 1],
   ];
+
 
   const seedResources = db.transaction((rows) => {
     for (const row of rows) insertResource.run(...row);

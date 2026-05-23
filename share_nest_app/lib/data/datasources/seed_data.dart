@@ -3,21 +3,53 @@ import '../models/reservation_item.dart';
 import '../models/resource_item.dart';
 
 class SeedData {
+  static int fromARGB(int a, int r, int g, int b) {
+    return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
+  }
   static List<ResourceItem> resources() => [
+        const ResourceItem(
+          id: 'woodworking-kit',
+          title: 'Woodworking Kit',
+          ownerId: '',
+          ownerName: 'Abrham Tesfaye',
+          distance: '200m',
+          rating: 4.9,
+          category: 'Tools',
+          description:
+              'Woodworking kits, all-in-one sets that provide the essential tools and materials needed to craft, build, or repair wooden projects with ease',
+          imagePath: 'assets/images/wood kit.jpg',
+          location: 'Mekanissa',
+          condition: 'Good condition',
+          statusText: 'Available Today',
+        ),
         const ResourceItem(
           id: 'power-drill',
           title: 'Power Drill',
           ownerId: '',
-          ownerName: 'Mike R.',
+          ownerName: 'Tinsae Getaneh',
           distance: '0.8 miles',
           rating: 4.8,
           category: 'Tools',
           description:
-              'Compact Drill, built for everyday wall drilling and light home projects. Solid condition with reliable power and steady performance.',
+              'Compact Drill, built for everyday wall drilling and light home projects. Solid condition with reliable power and steady performance',
           imagePath: 'assets/images/drill.png',
           location: 'Jemo, Mekanissa',
           condition:
-              'Includes 2 rechargeable batteries. Charger and carrying case included.',
+              'Includes 2 rechargeable batteries. Charger and carrying case included',
+          statusText: 'Available Today',
+        ),
+        const ResourceItem(
+          id: 'kitchen-set-kit',
+          title: 'Kitchen Set Kit',
+          ownerId: '',
+          ownerName: 'Sarah Kinde',
+          distance: '1.2km',
+          rating: 5.0,
+          category: 'Kitchen',
+          description: 'A complete kitchen set kit for all your cooking needs',
+          imagePath: 'assets/images/kitchen kits.jpg',
+          location: 'Jemo',
+          condition: 'Excellent condition',
           statusText: 'Available Today',
         ),
         const ResourceItem(
@@ -29,25 +61,11 @@ class SeedData {
           rating: 4.9,
           category: 'Books',
           description:
-              'Comprehensive Python programming guide covering fundamentals, data structures, and practical projects for beginners and intermediates.',
+              'Comprehensive Python programming guide covering fundamentals, data structures and practical projects for beginners and intermediates',
           imagePath: 'assets/images/python_book.png',
           location: 'Bole, Addis Ababa',
           condition: 'Gently used, no missing pages.',
           statusText: 'Free from Mar 15',
-        ),
-        const ResourceItem(
-          id: 'woodworking-kit',
-          title: 'Woodworking Kit',
-          ownerId: '',
-          ownerName: 'Abrham Tesfaye',
-          distance: '200m',
-          rating: 4.9,
-          category: 'Tools',
-          description:
-              'Woodworking kits, all-in-one sets that provide the essential tools and materials needed to craft, build, or repair wooden projects with ease',
-          imagePath: 'assets/images/drill.png',
-          location: 'Mekanissa',
-          condition: 'Good condition',
         ),
         const ResourceItem(
           id: 'english-textbook',
@@ -57,10 +75,39 @@ class SeedData {
           distance: '1.2km',
           rating: 5.0,
           category: 'Books',
-          description: 'Grade 11 English Textbook for Ethiopian students.',
-          imagePath: 'assets/images/python_book.png',
+          description: 'Grade 11 English Textbook for Ethiopian students',
+          imagePath: 'assets/images/english.jpg',
           location: 'Jemo',
           condition: 'Like new',
+          statusText: 'Available Today',
+        ),
+        const ResourceItem(
+          id: 'book-of-daniel',
+          title: 'Book of Daniel',
+          ownerId: '',
+          ownerName: 'Kaleb Henock',
+          distance: '1.5 miles',
+          rating: 4.9,
+          category: 'Books',
+          description: 'The Book of Daniel from the Bible, explore ancient prophecy',
+          imagePath: 'assets/images/book_of_daniel.jpg',
+          location: 'Bole',
+          condition: 'Good condition',
+          statusText: 'Available Today',
+        ),
+        const ResourceItem(
+          id: 'book-of-moses',
+          title: 'Book of Moses',
+          ownerId: '',
+          ownerName: 'Abenezer Tesfaye',
+          distance: '1.6 miles',
+          rating: 4.8,
+          category: 'Books',
+          description: 'The Book of Moses, part of the Pearl of Great Price',
+          imagePath: 'assets/images/book of moses.jpg',
+          location: 'Bole',
+          condition: 'Well preserved',
+          statusText: 'Available Today',
         ),
         const ResourceItem(
           id: 'event-chairs',
@@ -69,11 +116,12 @@ class SeedData {
           ownerName: 'Community Hub',
           distance: '0.8 Km',
           rating: 4.7,
-          category: 'Tools',
-          description: 'Set of 10 folding event chairs for parties and gatherings.',
-          imagePath: 'assets/images/drill.png',
+          category: 'Furniture',
+          description: 'Set of 10 folding event chairs for parties and gatherings',
+          imagePath: 'assets/images/plastic chairs.jpg',
           location: 'Jemo 1',
-          statusText: 'CONFIRMED',
+          condition: 'Clean and sturdy',
+          statusText: 'Available Today',
         ),
       ];
 
@@ -87,7 +135,7 @@ class SeedData {
         resourceId: 'power-drill',
         title: 'DeWalt Power Drill',
         ownerId: 'owner-1',
-        ownerName: 'Sarah Yabets',
+        ownerName: 'Tinsae Getaneh',
         borrowerId: 'user-1',
         borrowerName: 'You',
         statusText: 'DUE IN 2 DAYS',
@@ -96,8 +144,8 @@ class SeedData {
         returnDate: dueSoon,
         pickupTime: '10:00 AM',
         returnTime: '6:00 PM',
-        statusColorArgb: 0xFF4CAF50,
-        statusTextColorArgb: 0xFFFFFFFF,
+        statusColorArgb: fromARGB(255, 76, 175, 80),
+        statusTextColorArgb: fromARGB(255, 255, 255, 255),
       ),
       LoanItem(
         id: 'loan-2',
@@ -113,8 +161,8 @@ class SeedData {
         returnDate: activeReturn,
         pickupTime: '10:00 AM',
         returnTime: '6:00 PM',
-        statusColorArgb: 0xFFDDE8FC,
-        statusTextColorArgb: 0xFF1E8449,
+        statusColorArgb: fromARGB(255, 221, 232, 252),
+        statusTextColorArgb: fromARGB(255, 30, 132, 73),
       ),
     ];
   }
@@ -137,10 +185,7 @@ class SeedData {
   }
 
   static String _formatDate(DateTime d) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
-    ];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];
     return '${months[d.month - 1]} ${d.day}';
   }
 }

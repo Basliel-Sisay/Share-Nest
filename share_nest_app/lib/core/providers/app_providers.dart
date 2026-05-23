@@ -17,10 +17,6 @@ import '../../data/repositories/reservation_repository.dart';
 import '../../data/repositories/resource_repository.dart';
 export '../../features/auth/presentation/controllers/auth_controller.dart';
 
-final databaseHelperProvider = Provider<DatabaseHelper>(
-  (ref) => DatabaseHelper.instance,
-);
-
 final apiClientProvider = Provider<ApiClient>((ref) {
   final authState = ref.watch(authProvider);
   final token = authState.user?.token;
@@ -58,8 +54,9 @@ final reservationRepositoryProvider = Provider<ReservationRepository>((ref) {
 class ResourcesNotifier extends AsyncNotifier<List<ResourceItem>> {
   @override
   Future<List<ResourceItem>> build() async {
-    final repo = ref.read(resourceRepositoryProvider);
-    return repo.getResources();
+    final repo = ref.watch(resourceRepositoryProvider);
+    // Force a one-time refresh to clear stale local image paths
+    return repo.refreshFromNetwork();
   }
 
   Future<void> refresh() async {
@@ -104,7 +101,7 @@ final resourceByIdProvider =
 class LoansNotifier extends AsyncNotifier<List<LoanItem>> {
   @override
   Future<List<LoanItem>> build() async {
-    return ref.read(loanRepositoryProvider).getLoans();
+    return ref.watch(loanRepositoryProvider).getLoans();
   }
 
   Future<void> requestLoan(Map<String, dynamic> data) async {
@@ -132,7 +129,7 @@ final loansProvider =
 class ReservationsNotifier extends AsyncNotifier<List<ReservationItem>> {
   @override
   Future<List<ReservationItem>> build() async {
-    return ref.read(reservationRepositoryProvider).getReservations();
+    return ref.watch(reservationRepositoryProvider).getReservations();
   }
 
   Future<void> addReservation(ReservationItem item) async {
