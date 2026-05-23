@@ -3,18 +3,23 @@ class UserModel {
     required this.id,
     required this.name,
     required this.email,
+    this.role = 'user',
     this.token,
   });
 
   final String id;
   final String name;
   final String email;
+  final String role;
   final String? token;
+
+  bool get isOwner => role == 'owner';
 
   Map<String, dynamic> toMap() => {
         'id': id,
         'name': name,
         'email': email,
+        'role': role,
         'token': token ?? '',
       };
 
@@ -23,6 +28,7 @@ class UserModel {
       id: map['id'] as String,
       name: map['name'] as String,
       email: map['email'] as String,
+      role: (map['role'] as String?) ?? 'user',
       token: (map['token'] as String?)?.isNotEmpty == true
           ? map['token'] as String
           : null,
@@ -34,14 +40,16 @@ class UserModel {
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
+      role: (json['role'] as String?) ?? 'user',
     );
   }
 
-  UserModel copyWith({String? token}) {
+  UserModel copyWith({String? token, String? role}) {
     return UserModel(
       id: id,
       name: name,
       email: email,
+      role: role ?? this.role,
       token: token ?? this.token,
     );
   }

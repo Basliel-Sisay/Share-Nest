@@ -48,6 +48,21 @@ class ResourceLocalDataSource {
     );
   }
 
+  Future<void> update(ResourceItem item) async {
+    final database = await _db.database;
+    await database.update(
+      'resources',
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+  }
+
+  Future<void> delete(String id) async {
+    final database = await _db.database;
+    await database.delete('resources', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<int> count() async {
     final database = await _db.database;
     final result =

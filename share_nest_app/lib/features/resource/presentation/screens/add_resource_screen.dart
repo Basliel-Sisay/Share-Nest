@@ -88,10 +88,12 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
 
     setState(() => _isSaving = true);
 
+    final user = ref.read(authProvider).user;
     final id = slugifyTitle(title);
     final item = ResourceItem(
       id: id,
       title: title,
+      ownerId: user?.id ?? '',
       ownerName: 'You',
       distance: 'Nearby',
       rating: 5.0,
@@ -106,7 +108,16 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
       statusText: _isAvailable ? 'Available Today' : 'Unavailable',
     );
 
-    await ref.read(resourcesProvider.notifier).addResource(item);
+    try {
+      await ref.read(resourcesProvider.notifier).addResource(item);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save: $e')),
+      );
+      return;
+    }
 
     if (!mounted) return;
     setState(() => _isSaving = false);

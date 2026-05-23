@@ -18,9 +18,31 @@ class ItemDetailScreen extends ConsumerWidget {
     context.push('/reservation');
   }
 
+  void _deleteResource(BuildContext context, WidgetRef ref, String id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Resource'),
+        content: const Text('Are you sure you want to delete this resource?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref.read(resourcesProvider.notifier).deleteResource(id);
+    if (!context.mounted) return;
+    context.pop();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resourceAsync = ref.watch(resourceByIdProvider(resourceId));
+    final currentUser = ref.watch(authProvider).user;
 
     return Scaffold(
       body: SafeArea(
@@ -147,45 +169,79 @@ class ItemDetailScreen extends ConsumerWidget {
                           ),
                         ],
                         const SizedBox(height: 18),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: FilledButton(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 25, 130, 209),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(26),
+                        if (currentUser?.id == resource.ownerId) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(26),
+                                    ),
                                   ),
+                                  onPressed: () => context.push('/edit-resource/${resource.id}'),
+                                  icon: const Icon(Icons.edit, size: 18),
+                                  label: const Text('Edit'),
                                 ),
-                                onPressed: () => _startReservation(
-                                  context,
-                                  ref,
-                                  resource.title,
-                                ),
-                                child: const Text('Reserve Now'),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: FilledButton(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 23, 166, 67),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(26),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(26),
+                                    ),
                                   ),
+                                  onPressed: () => _deleteResource(context, ref, resource.id),
+                                  icon: const Icon(Icons.delete, size: 18),
+                                  label: const Text('Delete'),
                                 ),
-                                onPressed: () => _startReservation(
-                                  context,
-                                  ref,
-                                  resource.title,
-                                ),
-                                child: const Text('Request to Borrow'),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ] else ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 25, 130, 209),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(26),
+                                    ),
+                                  ),
+                                  onPressed: () => _startReservation(
+                                    context,
+                                    ref,
+                                    resource.title,
+                                  ),
+                                  child: const Text('Reserve Now'),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 23, 166, 67),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(26),
+                                    ),
+                                  ),
+                                  onPressed: () => _startReservation(
+                                    context,
+                                    ref,
+                                    resource.title,
+                                  ),
+                                  child: const Text('Request to Borrow'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

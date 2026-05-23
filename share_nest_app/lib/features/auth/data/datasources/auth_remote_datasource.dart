@@ -42,6 +42,11 @@ class AuthRemoteDataSource {
     return UserModel.fromJson(data['user'] as Map<String, dynamic>);
   }
 
+  Future<void> deleteAccount(String token) async {
+    final client = _clientWithToken(token);
+    await client.delete('/api/auth/account');
+  }
+
   ApiClient _clientWithToken(String token) {
     return _client.withAuthToken(token);
   }

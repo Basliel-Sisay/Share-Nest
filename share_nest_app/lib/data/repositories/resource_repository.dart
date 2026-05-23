@@ -13,7 +13,6 @@ class ResourceRepository {
   final ResourceLocalDataSource _local;
   final ResourceRemoteDataSource _remote;
 
-  /// Cache-first: returns SQLite data when present; otherwise fetches Node API.
   Future<List<ResourceItem>> getResources({bool forceRefresh = false}) async {
     if (!forceRefresh) {
       final cached = await _local.getAll();
@@ -56,13 +55,31 @@ class ResourceRepository {
 
   Future<ResourceItem> addResource(ResourceItem item) async {
     try {
-      final saved = await _remote.syncResource(item);
+      final saved = await _remote.create(item);
       await _local.insert(saved);
       return saved;
     } catch (_) {
       await _local.insert(item);
       return item;
     }
+  }
+
+  Future<ResourceItem> updateResource(ResourceItem item) async {
+    try {
+      final saved = await _remote.update(item);
+      await _local.update(saved);
+      return saved;
+    } catch (_) {
+      await _local.update(item);
+      return item;
+    }
+  }
+
+  Future<void> deleteResource(String id) async {
+    try {
+      await _remote.delete(id);
+    } catch (_) {}
+    await _local.delete(id);
   }
 
   Future<List<ResourceItem>> refreshFromNetwork() async {

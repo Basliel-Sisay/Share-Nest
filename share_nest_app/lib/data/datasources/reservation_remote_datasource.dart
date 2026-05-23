@@ -12,8 +12,17 @@ class ReservationRemoteDataSource {
     return rows.map(ReservationItem.fromMap).toList();
   }
 
-  Future<ReservationItem> create(ReservationItem item) async {
-    final row = await _client.post('/api/reservations', item.toMap());
+  Future<ReservationItem> create(Map<String, dynamic> data) async {
+    final row = await _client.post('/api/reservations', data);
     return ReservationItem.fromMap(row);
+  }
+
+  Future<ReservationItem> update(String id, Map<String, dynamic> data) async {
+    final row = await _client.put('/api/reservations/$id', data);
+    return ReservationItem.fromMap(row);
+  }
+
+  Future<void> delete(String id) async {
+    await _client.delete('/api/reservations/$id');
   }
 }

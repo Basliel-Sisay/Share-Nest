@@ -11,6 +11,19 @@ class LoanRemoteDataSource {
     return rows.map(LoanItem.fromMap).toList();
   }
 
+  Future<LoanItem> create(Map<String, dynamic> data) async {
+    final row = await _client.post('/api/loans', data);
+    return LoanItem.fromMap(row);
+  }
+
+  Future<LoanItem> updateStatus(String loanId, String status) async {
+    final row = await _client.patch(
+      '/api/loans/$loanId/status',
+      {'status': status},
+    );
+    return LoanItem.fromMap(row);
+  }
+
   Future<LoanItem> extendLoan(String loanId, DateTime newReturnDate) async {
     final row = await _client.patch(
       '/api/loans/$loanId/extend',

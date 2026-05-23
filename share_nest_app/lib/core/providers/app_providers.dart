@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/database_helper.dart';
+import '../../core/network/api_client.dart';
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../data/datasources/loan_local_datasource.dart';
 import '../../data/datasources/loan_remote_datasource.dart';
 import '../../data/datasources/reservation_local_datasource.dart';
@@ -19,27 +21,37 @@ final databaseHelperProvider = Provider<DatabaseHelper>(
   (ref) => DatabaseHelper.instance,
 );
 
+final apiClientProvider = Provider<ApiClient>((ref) {
+  final authState = ref.watch(authProvider);
+  final token = authState.user?.token;
+  if (token != null) return ApiClient(authToken: token);
+  return ApiClient();
+});
+
 final resourceRepositoryProvider = Provider<ResourceRepository>((ref) {
   final db = ref.watch(databaseHelperProvider);
+  final client = ref.watch(apiClientProvider);
   return ResourceRepository(
     local: ResourceLocalDataSource(db),
-    remote: ResourceRemoteDataSource(),
+    remote: ResourceRemoteDataSource(client: client),
   );
 });
 
 final loanRepositoryProvider = Provider<LoanRepository>((ref) {
   final db = ref.watch(databaseHelperProvider);
+  final client = ref.watch(apiClientProvider);
   return LoanRepository(
     local: LoanLocalDataSource(db),
-    remote: LoanRemoteDataSource(),
+    remote: LoanRemoteDataSource(client: client),
   );
 });
 
 final reservationRepositoryProvider = Provider<ReservationRepository>((ref) {
   final db = ref.watch(databaseHelperProvider);
+  final client = ref.watch(apiClientProvider);
   return ReservationRepository(
     local: ReservationLocalDataSource(db),
-    remote: ReservationRemoteDataSource(),
+    remote: ReservationRemoteDataSource(client: client),
   );
 });
 
@@ -64,6 +76,18 @@ class ResourcesNotifier extends AsyncNotifier<List<ResourceItem>> {
     await repo.addResource(item);
     state = await AsyncValue.guard(() => repo.getResources());
   }
+
+  Future<void> updateResource(ResourceItem item) async {
+    final repo = ref.read(resourceRepositoryProvider);
+    await repo.updateResource(item);
+    state = await AsyncValue.guard(() => repo.getResources());
+  }
+
+  Future<void> deleteResource(String id) async {
+    final repo = ref.read(resourceRepositoryProvider);
+    await repo.deleteResource(id);
+    state = await AsyncValue.guard(() => repo.getResources());
+  }
 }
 
 final resourcesProvider =
@@ -81,6 +105,18 @@ class LoansNotifier extends AsyncNotifier<List<LoanItem>> {
   @override
   Future<List<LoanItem>> build() async {
     return ref.read(loanRepositoryProvider).getLoans();
+  }
+
+  Future<void> requestLoan(Map<String, dynamic> data) async {
+    final repo = ref.read(loanRepositoryProvider);
+    await repo.requestLoan(data);
+    state = await AsyncValue.guard(() => repo.getLoans());
+  }
+
+  Future<void> updateLoanStatus(String loanId, String status) async {
+    final repo = ref.read(loanRepositoryProvider);
+    await repo.updateLoanStatus(loanId, status);
+    state = await AsyncValue.guard(() => repo.getLoans());
   }
 
   Future<void> extendLoan(String loanId, DateTime newDate) async {
@@ -102,6 +138,18 @@ class ReservationsNotifier extends AsyncNotifier<List<ReservationItem>> {
   Future<void> addReservation(ReservationItem item) async {
     final repo = ref.read(reservationRepositoryProvider);
     await repo.createReservation(item);
+    state = await AsyncValue.guard(() => repo.getReservations());
+  }
+
+  Future<void> updateReservation(ReservationItem item) async {
+    final repo = ref.read(reservationRepositoryProvider);
+    await repo.updateReservation(item);
+    state = await AsyncValue.guard(() => repo.getReservations());
+  }
+
+  Future<void> deleteReservation(String id) async {
+    final repo = ref.read(reservationRepositoryProvider);
+    await repo.deleteReservation(id);
     state = await AsyncValue.guard(() => repo.getReservations());
   }
 }

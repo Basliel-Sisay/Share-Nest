@@ -36,6 +36,21 @@ class ReservationLocalDataSource {
     await batch.commit(noResult: true);
   }
 
+  Future<void> update(ReservationItem item) async {
+    final database = await _db.database;
+    await database.update(
+      'reservations',
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+  }
+
+  Future<void> delete(String id) async {
+    final database = await _db.database;
+    await database.delete('reservations', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<int> count() async {
     final database = await _db.database;
     final result =

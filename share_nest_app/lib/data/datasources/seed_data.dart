@@ -7,6 +7,7 @@ class SeedData {
         const ResourceItem(
           id: 'power-drill',
           title: 'Power Drill',
+          ownerId: '',
           ownerName: 'Mike R.',
           distance: '0.8 miles',
           rating: 4.8,
@@ -22,6 +23,7 @@ class SeedData {
         const ResourceItem(
           id: 'python-programming',
           title: 'Python Programming',
+          ownerId: '',
           ownerName: 'Sarah W.',
           distance: '1.2 miles',
           rating: 4.9,
@@ -36,6 +38,7 @@ class SeedData {
         const ResourceItem(
           id: 'woodworking-kit',
           title: 'Woodworking Kit',
+          ownerId: '',
           ownerName: 'Abrham Tesfaye',
           distance: '200m',
           rating: 4.9,
@@ -49,6 +52,7 @@ class SeedData {
         const ResourceItem(
           id: 'english-textbook',
           title: 'English Text Book',
+          ownerId: '',
           ownerName: 'Sarah Kinde',
           distance: '1.2km',
           rating: 5.0,
@@ -61,6 +65,7 @@ class SeedData {
         const ResourceItem(
           id: 'event-chairs',
           title: 'Event Chairs (Set of 10)',
+          ownerId: '',
           ownerName: 'Community Hub',
           distance: '0.8 Km',
           rating: 4.7,
@@ -75,15 +80,22 @@ class SeedData {
   static List<LoanItem> loans() {
     final dueSoon = DateTime.now().add(const Duration(days: 2));
     final activeReturn = DateTime.now().add(const Duration(days: 4));
+    final now = DateTime.now();
     return [
       LoanItem(
         id: 'loan-1',
         resourceId: 'power-drill',
         title: 'DeWalt Power Drill',
+        ownerId: 'owner-1',
         ownerName: 'Sarah Yabets',
+        borrowerId: 'user-1',
+        borrowerName: 'You',
         statusText: 'DUE IN 2 DAYS',
         dateText: 'Return by ${_formatDate(dueSoon)}, 6:00 PM',
+        pickupDate: now,
         returnDate: dueSoon,
+        pickupTime: '10:00 AM',
+        returnTime: '6:00 PM',
         statusColorArgb: 0xFF4CAF50,
         statusTextColorArgb: 0xFFFFFFFF,
       ),
@@ -91,10 +103,16 @@ class SeedData {
         id: 'loan-2',
         resourceId: 'woodworking-kit',
         title: '4 Person Camping Tent',
+        ownerId: 'owner-2',
         ownerName: 'Kirubel Awoke',
+        borrowerId: 'user-1',
+        borrowerName: 'You',
         statusText: 'ACTIVE',
         dateText: 'Borrowed for 4 more days',
+        pickupDate: now,
         returnDate: activeReturn,
+        pickupTime: '10:00 AM',
+        returnTime: '6:00 PM',
         statusColorArgb: 0xFFDDE8FC,
         statusTextColorArgb: 0xFF1E8449,
       ),
@@ -107,6 +125,8 @@ class SeedData {
         id: 'res-1',
         resourceId: 'event-chairs',
         title: 'Event Chairs (Set of 10)',
+        ownerId: 'owner-1',
+        borrowerId: 'user-1',
         pickupLocation: 'Pickup from Jemo 1',
         pickupDate: DateTime(2026, 7, 12),
         returnDate: DateTime(2026, 7, 14),

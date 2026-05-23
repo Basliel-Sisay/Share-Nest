@@ -2,6 +2,7 @@ class ResourceItem {
   const ResourceItem({
     required this.id,
     required this.title,
+    required this.ownerId,
     required this.ownerName,
     required this.distance,
     required this.rating,
@@ -16,6 +17,7 @@ class ResourceItem {
 
   final String id;
   final String title;
+  final String ownerId;
   final String ownerName;
   final String distance;
   final double rating;
@@ -30,6 +32,7 @@ class ResourceItem {
   ResourceItem copyWith({
     String? id,
     String? title,
+    String? ownerId,
     String? ownerName,
     String? distance,
     double? rating,
@@ -44,6 +47,7 @@ class ResourceItem {
     return ResourceItem(
       id: id ?? this.id,
       title: title ?? this.title,
+      ownerId: ownerId ?? this.ownerId,
       ownerName: ownerName ?? this.ownerName,
       distance: distance ?? this.distance,
       rating: rating ?? this.rating,
@@ -60,6 +64,7 @@ class ResourceItem {
   Map<String, dynamic> toMap() => {
         'id': id,
         'title': title,
+        'owner_id': ownerId,
         'owner_name': ownerName,
         'distance': distance,
         'rating': rating,
@@ -76,6 +81,7 @@ class ResourceItem {
     return ResourceItem(
       id: map['id'] as String,
       title: map['title'] as String,
+      ownerId: (map['owner_id'] as String?) ?? '',
       ownerName: map['owner_name'] as String,
       distance: map['distance'] as String,
       rating: (map['rating'] as num).toDouble(),

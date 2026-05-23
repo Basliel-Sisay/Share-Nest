@@ -7,10 +7,36 @@ import '../../../../core/providers/app_providers.dart';
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
+  void _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Account'),
+        content: const Text(
+          'This will permanently delete your account and all associated data. Are you sure?',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref.read(authProvider.notifier).deleteAccount();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
+    final resourcesAsync = ref.watch(resourcesProvider);
+    final loansAsync = ref.watch(loansProvider);
+
+    final resourceCount = resourcesAsync.asData?.value.length ?? 0;
+    final loanCount = loansAsync.asData?.value.length ?? 0;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 246, 246, 246),
@@ -35,8 +61,8 @@ class ProfileScreen extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _StatBox(title: "Resources", value: "12"),
-                  _StatBox(title: "Shares", value: "48"),
+                  _StatBox(title: "Resources", value: "$resourceCount"),
+                  _StatBox(title: "Loans", value: "$loanCount"),
                 ],
               ),
               const SizedBox(height: 30),
@@ -52,8 +78,21 @@ class ProfileScreen extends ConsumerWidget {
               ),
               _menuItem(icon: Icons.help, title: "Help Center", onTap: () {}),
               const SizedBox(height: 20),
+              if (authState.isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ),
+              if (authState.error != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    authState.error!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
               TextButton(
-                onPressed: () => context.push('/delete-account'),
+                onPressed: authState.isLoading ? null : () => _deleteAccount(context, ref),
                 child: const Text(
                   "Delete Account",
                   style: TextStyle(color: Colors.red),

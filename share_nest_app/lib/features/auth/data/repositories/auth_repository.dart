@@ -54,6 +54,14 @@ class AuthRepository {
     }
   }
 
+  Future<void> deleteAccount() async {
+    final cached = await _local.getUser();
+    if (cached?.token != null) {
+      await _remote.deleteAccount(cached!.token!);
+    }
+    await _local.deleteUser();
+  }
+
   Future<void> logout() async {
     await _local.deleteUser();
   }

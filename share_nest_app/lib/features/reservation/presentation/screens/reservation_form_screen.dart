@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/network/api_client.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../../../../data/models/reservation_item.dart';
 
@@ -91,11 +92,14 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       return;
     }
 
+    final user = ref.read(authProvider).user;
     final timeFormat = DateFormat.jm();
     final reservation = ReservationItem(
       id: 'res-${DateTime.now().millisecondsSinceEpoch}',
       resourceId: draft.resourceId,
       title: draft.resourceTitle,
+      ownerId: '',
+      borrowerId: user?.id ?? '',
       pickupLocation: 'Pickup from community hub',
       pickupDate: pickup,
       returnDate: ret,
@@ -103,7 +107,21 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       returnTime: timeFormat.format(ret),
     );
 
-    await ref.read(reservationsProvider.notifier).addReservation(reservation);
+    try {
+      await ref.read(reservationsProvider.notifier).addReservation(reservation);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.statusCode == 409
+              ? 'This time slot conflicts with an existing reservation. Please choose different dates.'
+              : e.message),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     ref.read(reservationDraftProvider.notifier).clear();
 
     if (!mounted) return;

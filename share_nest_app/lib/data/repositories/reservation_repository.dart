@@ -32,12 +32,30 @@ class ReservationRepository {
 
   Future<ReservationItem> createReservation(ReservationItem item) async {
     try {
-      final created = await _remote.create(item);
+      final created = await _remote.create(item.toMap());
       await _local.insert(created);
       return created;
     } catch (_) {
       await _local.insert(item);
       return item;
     }
+  }
+
+  Future<ReservationItem> updateReservation(ReservationItem item) async {
+    try {
+      final updated = await _remote.update(item.id, item.toMap());
+      await _local.update(updated);
+      return updated;
+    } catch (_) {
+      await _local.update(item);
+      return item;
+    }
+  }
+
+  Future<void> deleteReservation(String id) async {
+    try {
+      await _remote.delete(id);
+    } catch (_) {}
+    await _local.delete(id);
   }
 }

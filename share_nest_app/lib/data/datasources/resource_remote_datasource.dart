@@ -1,7 +1,6 @@
 import '../../core/network/api_client.dart';
 import '../models/resource_item.dart';
 
-/// Fetches resources from the Node.js API (server SQLite).
 class ResourceRemoteDataSource {
   ResourceRemoteDataSource({ApiClient? client})
       : _client = client ?? ApiClient();
@@ -23,8 +22,17 @@ class ResourceRemoteDataSource {
     }
   }
 
-  Future<ResourceItem> syncResource(ResourceItem item) async {
+  Future<ResourceItem> create(ResourceItem item) async {
     final row = await _client.post('/api/resources', item.toMap());
     return ResourceItem.fromMap(row);
+  }
+
+  Future<ResourceItem> update(ResourceItem item) async {
+    final row = await _client.put('/api/resources/${item.id}', item.toMap());
+    return ResourceItem.fromMap(row);
+  }
+
+  Future<void> delete(String id) async {
+    await _client.delete('/api/resources/$id');
   }
 }

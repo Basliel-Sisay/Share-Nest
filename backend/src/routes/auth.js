@@ -6,13 +6,32 @@ const db = require('../db');
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'share-nest-dev-secret';
 
+function authenticate(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  try {
+    const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+    req.userId = decoded.userId;
+    req.userEmail = decoded.email;
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
 router.post('/signup', (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    return res.status(400).json({ error: 'name, email, and password are required' });
+    return res
+      .status(400)
+      .json({ error: 'name, email, and password are required' });
   }
   if (password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    return res
+      .status(400)
+      .json({ error: 'Password must be at least 6 characters' });
   }
 
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
@@ -23,11 +42,15 @@ router.post('/signup', (req, res) => {
   const id = `user-${Date.now()}`;
   const hashed = bcrypt.hashSync(password, 10);
   db.prepare(
-    'INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)'
-  ).run(id, name, email, hashed);
+    'INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)'
+  ).run(id, name, email, hashed, 'user');
 
-  const user = db.prepare('SELECT id, name, email, created_at FROM users WHERE id = ?').get(id);
-  const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  const user = db
+    .prepare('SELECT id, name, email, role, created_at FROM users WHERE id = ?')
+    .get(id);
+  const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
+    expiresIn: '7d',
+  });
   res.status(201).json({ user, token });
 });
 
@@ -38,37 +61,44 @@ router.post('/login', (req, res) => {
   }
 
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
-  if (!user) {
+  if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(401).json({ error: 'Invalid email or password' });
   }
 
-  const valid = bcrypt.compareSync(password, user.password);
-  if (!valid) {
-    return res.status(401).json({ error: 'Invalid email or password' });
-  }
-
-  const safeUser = { id: user.id, name: user.name, email: user.email, created_at: user.created_at };
-  const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  const safeUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    created_at: user.created_at,
+  };
+  const token = jwt.sign(
+    { userId: user.id, email: user.email, role: user.role },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
   res.json({ user: safeUser, token });
 });
 
-router.get('/me', (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = db.prepare('SELECT id, name, email, created_at FROM users WHERE id = ?').get(decoded.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.json({ user });
-  } catch {
-    return res.status(401).json({ error: 'Invalid or expired token' });
-  }
+router.get('/me', authenticate, (req, res) => {
+  const user = db
+    .prepare('SELECT id, name, email, role, created_at FROM users WHERE id = ?')
+    .get(req.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ user });
 });
 
-module.exports = router;
+router.delete('/account', authenticate, (req, res) => {
+  const userId = req.userId;
+  db.prepare('DELETE FROM reservations WHERE owner_id = ? OR borrower_id = ?').run(
+    userId, userId
+  );
+  db.prepare('DELETE FROM loans WHERE owner_id = ? OR borrower_id = ?').run(
+    userId, userId
+  );
+  db.prepare('DELETE FROM resources WHERE owner_id = ?').run(userId);
+  db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+  res.json({ message: 'Account and all associated data deleted' });
+});
+
+module.exports = { router, authenticate };

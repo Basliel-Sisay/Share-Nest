@@ -60,6 +60,19 @@ class ApiClient {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>> put(
+      String path, Map<String, dynamic> body) async {
+    final response = await _request(
+      _client.put(
+        ApiConfig.uri(path),
+        headers: _headers,
+        body: jsonEncode(body),
+      ),
+    );
+    _ensureSuccess(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
   Future<Map<String, dynamic>> patch(
       String path, Map<String, dynamic> body) async {
     final response = await _request(
@@ -71,6 +84,13 @@ class ApiClient {
     );
     _ensureSuccess(response);
     return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  Future<void> delete(String path) async {
+    final response = await _request(
+      _client.delete(ApiConfig.uri(path), headers: _headers),
+    );
+    _ensureSuccess(response, okStatuses: {200, 202, 204});
   }
 
   Map<String, String> get _headers => {

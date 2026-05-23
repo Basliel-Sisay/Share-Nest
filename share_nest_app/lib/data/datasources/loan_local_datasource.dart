@@ -27,6 +27,15 @@ class LoanLocalDataSource {
     await batch.commit(noResult: true);
   }
 
+  Future<void> insert(LoanItem item) async {
+    final database = await _db.database;
+    await database.insert(
+      'loans',
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   Future<void> update(LoanItem item) async {
     final database = await _db.database;
     await database.update(
@@ -35,6 +44,11 @@ class LoanLocalDataSource {
       where: 'id = ?',
       whereArgs: [item.id],
     );
+  }
+
+  Future<void> delete(String id) async {
+    final database = await _db.database;
+    await database.delete('loans', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> count() async {
