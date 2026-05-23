@@ -71,6 +71,12 @@ class ProfileScreen extends ConsumerWidget {
                 title: "Settings",
                 onTap: () => context.push('/settings'),
               ),
+              if (user?.role == 'admin')
+                _menuItem(
+                  icon: Icons.admin_panel_settings,
+                  title: "Admin Dashboard",
+                  onTap: () => context.push('/admin'),
+                ),
               _menuItem(
                 icon: Icons.history,
                 title: "Sharing History",
