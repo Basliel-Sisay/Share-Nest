@@ -34,7 +34,8 @@ class LoanItem {
   final int statusTextColorArgb;
 
   bool get isPending => statusText == 'PENDING';
-  bool get isApproved => statusText == 'APPROVED';
+  bool get isApproved => statusText == 'APPROVED' || statusText == 'CONFIRMED';
+  bool get isConfirmed => statusText == 'CONFIRMED';
   bool get isActive => statusText == 'ACTIVE';
   bool get isReturned => statusText == 'RETURNED';
   bool get isCancelled => statusText == 'CANCELLED';
