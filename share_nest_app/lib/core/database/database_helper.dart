@@ -1,23 +1,32 @@
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DatabaseHelper {
+final databaseHelperProvider = Provider<DatabaseHelper>(
+  (ref) => DatabaseHelper.instance,
+);
+
+class DatabaseHelper{
   DatabaseHelper._();
   static final DatabaseHelper instance = DatabaseHelper._();
-
   static const _dbName = 'share_nest.db';
   static const _dbVersion = 4;
-
   Database? _database;
 
-  Future<Database> get database async {
+  Future<Database> get database async{
     _database ??= await _init();
     return _database!;
   }
 
-  Future<Database> _init() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, _dbName);
+  Future<Database> _init() async{
+    String path;
+    if (kIsWeb) {
+      path = _dbName;
+    } else {
+      path = join(await getDatabasesPath(), _dbName);
+    }
+    
     return openDatabase(
       path,
       version: _dbVersion,
@@ -25,25 +34,25 @@ class DatabaseHelper {
       onUpgrade: _onUpgrade,
     );
   }
-
-  Future<bool> _columnExists(Database db, String table, String column) async {
+  Future<bool> _columnExists(Database db, String table, String column) async{
     final result = await db.rawQuery('PRAGMA table_info($table)');
-    for (final row in result) {
-      if (row['name'] == column) return true;
+    for (final row in result){
+      if (row['name'] == column){
+         return true;
+        }
     }
     return false;
   }
-
   Future<void> _addColumnIfNotExists(
-      Database db, String table, String columnDef) async {
+      Database db, String table, String columnDef) async{
     final colName = columnDef.split(' ').first;
-    if (!await _columnExists(db, table, colName)) {
+    if (!await _columnExists(db, table, colName)){
       await db.execute('ALTER TABLE $table ADD COLUMN $columnDef');
     }
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
+    if (oldVersion < 2){
       await db.execute('''
         CREATE TABLE IF NOT EXISTS users (
           id TEXT PRIMARY KEY,
@@ -53,7 +62,7 @@ class DatabaseHelper {
         )
       ''');
     }
-    if (oldVersion < 3) {
+    if (oldVersion < 3){
       await _addColumnIfNotExists(
           db, 'resources', 'owner_id TEXT NOT NULL DEFAULT ""');
       await _addColumnIfNotExists(
@@ -73,13 +82,13 @@ class DatabaseHelper {
       await _addColumnIfNotExists(
           db, 'reservations', 'borrower_id TEXT NOT NULL DEFAULT ""');
     }
-    if (oldVersion < 4) {
+    if (oldVersion < 4){
       await _addColumnIfNotExists(
           db, 'users', 'role TEXT NOT NULL DEFAULT "user"');
     }
   }
 
-  Future<void> _onCreate(Database db, int version) async {
+  Future<void> _onCreate(Database db, int version) async{
     await db.execute('''
       CREATE TABLE resources (
         id TEXT PRIMARY KEY,

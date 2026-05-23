@@ -31,34 +31,50 @@ bool _isAuthRoute(String path) {
   return path == '/landing' || path == '/login' || path == '/signup';
 }
 
-class _AuthRedirectNotifier extends ChangeNotifier {
-  bool isAuthenticated = false;
+class AuthListenable extends ChangeNotifier {
+  AuthListenable(Ref ref) {
+    _subscription = ref.listen<AuthState>(
+      authProvider,
+      (previous, next) {
+        if (previous?.isAuthenticated != next.isAuthenticated) {
+          notifyListeners();
+        }
+      },
+    );
+  }
 
-  void update(bool value) {
-    if (value != isAuthenticated) {
-      isAuthenticated = value;
-      notifyListeners();
-    }
+  late final ProviderSubscription<AuthState> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.close();
+    super.dispose();
   }
 }
 
-final _authRedirectNotifier = _AuthRedirectNotifier();
+final authListenableProvider = Provider<AuthListenable>((ref) {
+  final listenable = AuthListenable(ref);
+  ref.onDispose(listenable.dispose);
+  return listenable;
+});
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  ref.listen<AuthState>(authProvider, (_, next) {
-    _authRedirectNotifier.update(next.isAuthenticated);
-  });
+  final listenable = ref.watch(authListenableProvider);
 
   return GoRouter(
     initialLocation: '/landing',
     navigatorKey: _rootNavigatorKey,
-    refreshListenable: _authRedirectNotifier,
+    refreshListenable: listenable,
     redirect: (context, state) {
-      final isLoggedIn = _authRedirectNotifier.isAuthenticated;
+      final isLoggedIn = ref.read(authProvider).isAuthenticated;
       final path = state.matchedLocation;
 
-      if (!isLoggedIn && !_isAuthRoute(path)) return '/landing';
-      if (isLoggedIn && _isAuthRoute(path)) return '/home';
+      if (!isLoggedIn && !_isAuthRoute(path)){
+        return '/landing';
+      }
+      if (isLoggedIn && _isAuthRoute(path)){ 
+        return '/home';
+      }
       return null;
     },
     routes: [

@@ -8,11 +8,7 @@ import '../../data/models/user_model.dart';
 import '../../data/repositories/auth_repository.dart';
 
 class AuthState {
-  const AuthState({
-    this.user,
-    this.isLoading = false,
-    this.error,
-  });
+  const AuthState({this.user,this.isLoading = false,this.error});
 
   final UserModel? user;
   final bool isLoading;
@@ -24,87 +20,78 @@ class AuthState {
     UserModel? user,
     bool? isLoading,
     String? error,
+    bool clearError = false,
   }) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: clearError ? null : (error ?? this.error),
     );
   }
 }
 
-class AuthNotifier extends Notifier<AuthState> {
+class AuthNotifier extends Notifier<AuthState>{
   @override
-  AuthState build() {
-    _tryAutoLogin();
+  AuthState build(){
+    Future.microtask(_tryAutoLogin);
     return const AuthState();
   }
 
-  Future<void> _tryAutoLogin() async {
-    final repo = ref.read(authRepositoryProvider);
-    final user = await repo.tryAutoLogin();
-    if (user != null) {
-      state = AuthState(user: user);
+  Future<void> _tryAutoLogin() async{
+    try {
+      final repo = ref.read(authRepositoryProvider);
+      final user = await repo.tryAutoLogin();
+      if (user != null) {
+        state = AuthState(user: user);
+      }
+    } 
+    catch (_){
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
-    state = state.copyWith(isLoading: true, error: null);
+  Future<void> login({required String email, required String password}) async{
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
       final repo = ref.read(authRepositoryProvider);
       final user = await repo.login(email: email, password: password);
       state = AuthState(user: user);
-    } on Exception catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _formatError(e),
-      );
+    } 
+    catch (e) {
+      state = AuthState(isLoading: false, error: _formatError(e));
     }
   }
 
-  Future<void> signup({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    state = state.copyWith(isLoading: true, error: null);
+  Future<void> signup({required String name,required String email,required String password}) async{
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
       final repo = ref.read(authRepositoryProvider);
-      final user = await repo.signup(
-        name: name,
-        email: email,
-        password: password,
-      );
+      final user = await repo.signup(name: name,email: email,password: password);
       state = AuthState(user: user);
-    } on Exception catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _formatError(e),
-      );
+    } 
+    catch (e) {
+      state = AuthState(isLoading: false, error: _formatError(e));
     }
   }
 
-  Future<void> deleteAccount() async {
-    state = state.copyWith(isLoading: true, error: null);
+  Future<void> deleteAccount() async{
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
       final repo = ref.read(authRepositoryProvider);
       await repo.deleteAccount();
       state = const AuthState();
-    } on Exception catch (e) {
+    } 
+    catch (e) {
       state = state.copyWith(isLoading: false, error: _formatError(e));
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout() async{
     final repo = ref.read(authRepositoryProvider);
     await repo.logout();
     state = const AuthState();
   }
 
-  String _formatError(Exception e) {
+  String _formatError(Object e) {
     if (e is ApiException) return e.message;
     final msg = e.toString();
     return msg.replaceFirst(RegExp(r'^\w+Exception:\s*'), '');
@@ -112,7 +99,8 @@ class AuthNotifier extends Notifier<AuthState> {
 }
 
 final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
-  return AuthLocalDataSource(DatabaseHelper.instance);
+  final db = ref.watch(databaseHelperProvider);
+  return AuthLocalDataSource(db);
 });
 
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
@@ -120,11 +108,9 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(
-    local: ref.watch(authLocalDataSourceProvider),
-    remote: ref.watch(authRemoteDataSourceProvider),
-  );
+  final local = ref.watch(authLocalDataSourceProvider);
+  final remote = ref.watch(authRemoteDataSourceProvider);
+  return AuthRepository(local: local, remote: remote);
 });
 
-final authProvider =
-    NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
