@@ -18,18 +18,15 @@ app.use(express.json());
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'share-nest-api' });
 });
-
 app.use('/api/auth', authRouter);
 app.use('/api/resources', resourcesRouter);
 app.use('/api/loans', loansRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/admin', adminRouter);
-
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });
 });
-
 app.listen(PORT, () => {
   console.log('ShareNest API running at http://localhost:' + PORT);
 });

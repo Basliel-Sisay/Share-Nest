@@ -26,7 +26,6 @@ function seed() {
   }
 
   const resourceCount = db.prepare('SELECT COUNT(*) AS c FROM resources').get().c;
-  // Clear resources to ensure updated paths and order are applied
   db.prepare('DELETE FROM resources').run();
   
   const insertResource = db.prepare(
@@ -41,7 +40,7 @@ function seed() {
       'Woodworking kits, all-in-one sets that provide the essential tools and materials needed to craft, build, or repair wooden projects with ease',
       'assets/images/wood_kit.jpg', 'Mekanissa', 'Good condition',
       'Available Today', 1],
-    ['python-programming', 'Python Book', 'user-1', 'Sarah W.', '1.2 miles', 4.9, 'Books',
+    ['python-programming', 'Python Book', 'user-1', 'Sarah Wolde', '1.2 miles', 4.9, 'Books',
       'Comprehensive Python programming guide covering fundamentals, data structures and practical projects for beginners and intermediates',
       'assets/images/python_book.png', 'Bole, Addis Ababa', 'Gently used, no missing pages.',
       'Free from Mar 15', 1],
@@ -54,7 +53,7 @@ function seed() {
       'Grade 11 English Textbook for Ethiopian students',
       'assets/images/english.jpg', 'Jemo', 'Like new',
       'Available Today', 1],
-    ['book-of-daniel', 'Book of Daniel', 'user-1', 'Sarah W.', '1.5 miles', 4.9, 'Books',
+    ['book-of-daniel', 'Book of Daniel', 'user-1', 'Sarah Wolde', '1.5 miles', 4.9, 'Books',
       'The Book of Daniel from the Bible, explore ancient prophecy',
       'assets/images/book_of_daniel.jpg', 'Bole', 'Good condition',
       'Available Today', 1],
@@ -66,7 +65,7 @@ function seed() {
       'Sturdy aluminum step ladder for home maintenance.',
       'assets/images/ladder.png', 'Garment', 'Stable and clean',
       'Available Today', 1],
-    ['book-of-moses', 'Book of Moses', 'user-1', 'Sarah W.', '1.6 miles', 4.8, 'Books',
+    ['book-of-moses', 'Book of Moses', 'user-1', 'Sarah Wolde', '1.6 miles', 4.8, 'Books',
       'The Book of Moses, part of the Pearl of Great Price',
       'assets/images/book_of_moses.jpg', 'Bole', 'Well preserved',
       'Available Today', 1],
@@ -80,7 +79,6 @@ function seed() {
       'Available Today', 1],
   ];
 
-
   const seedResources = db.transaction((rows) => {
     for (const row of rows) insertResource.run(...row);
   });
@@ -91,7 +89,6 @@ function seed() {
   const activeReturn = new Date();
   activeReturn.setDate(activeReturn.getDate() + 4);
 
-  // Only seed loans if loan-1 doesn't already exist
   const loanCount = db.prepare('SELECT COUNT(*) AS c FROM loans WHERE id = ?').get('loan-1').c;
   if (loanCount === 0) {
     db.prepare(
@@ -108,7 +105,6 @@ function seed() {
     );
   }
 
-  // Only seed reservations if res-1 doesn't already exist
   const resCount = db.prepare('SELECT COUNT(*) AS c FROM reservations WHERE id = ?').get('res-1').c;
   if (resCount === 0) {
     db.prepare(
@@ -124,11 +120,10 @@ function seed() {
       '10:00 AM', '04:00 PM', '0.8 Km away', 'CONFIRMED',
     );
   }
-
   console.log('SQLite database seeded successfully');
 }
 
-if (require.main === module) {
+if (require.main === module){
   seed();
 }
 module.exports = { seed };
