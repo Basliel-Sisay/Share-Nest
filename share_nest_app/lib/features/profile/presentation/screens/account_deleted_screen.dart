@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class AccountDeletedScreen extends StatefulWidget {
   const AccountDeletedScreen({super.key});
@@ -16,7 +15,7 @@ class _AccountDeletedScreenState extends State<AccountDeletedScreen> {
   }
 
   void _goHome() {
-    context.go('/landing');
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override

@@ -87,9 +87,9 @@ class ItemDetailScreen extends ConsumerWidget {
         title: const Text('Delete Resource'),
         content: const Text('Are you sure you want to delete this resource?'),
         actions: [
-          TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
-            onPressed: () => ctx.pop(true),
+            onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
@@ -269,44 +269,38 @@ class ItemDetailScreen extends ConsumerWidget {
                               Expanded(
                                 child: FilledButton(
                                   style: FilledButton.styleFrom(
-                                    backgroundColor: resource.isAvailable
-                                        ? const Color.fromARGB(255, 25, 130, 209)
-                                        : Colors.grey,
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 25, 130, 209),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(26),
                                     ),
                                   ),
-                                  onPressed: resource.isAvailable
-                                      ? () => _startReservation(
-                                            context,
-                                            ref,
-                                            resource.title,
-                                          )
-                                      : null,
-                                  child: Text(resource.isAvailable ? 'Reserve Now' : 'Not Available'),
+                                  onPressed: () => _startReservation(
+                                    context,
+                                    ref,
+                                    resource.title,
+                                  ),
+                                  child: const Text('Reserve Now'),
                                 ),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: FilledButton(
                                   style: FilledButton.styleFrom(
-                                    backgroundColor: resource.isAvailable
-                                        ? const Color.fromARGB(255, 23, 166, 67)
-                                        : Colors.grey.shade400,
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 23, 166, 67),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(26),
                                     ),
                                   ),
-                                  onPressed: resource.isAvailable
-                                      ? () => _requestBorrow(
-                                            context,
-                                            ref,
-                                            resource.title,
-                                            resource.ownerId,
-                                            resource.ownerName,
-                                          )
-                                      : null,
-                                  child: Text(resource.isAvailable ? 'Request to Borrow' : 'On Loan'),
+                                  onPressed: () => _requestBorrow(
+                                    context,
+                                    ref,
+                                    resource.title,
+                                    resource.ownerId,
+                                    resource.ownerName,
+                                  ),
+                                  child: const Text('Request to Borrow'),
                                 ),
                               ),
                             ],

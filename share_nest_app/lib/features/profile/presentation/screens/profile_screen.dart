@@ -35,9 +35,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           'This will permanently delete your account and all associated data. Are you sure?',
         ),
         actions: [
-          TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
-            onPressed: () => ctx.pop(true),
+            onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],

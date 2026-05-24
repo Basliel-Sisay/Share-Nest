@@ -5,38 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../widgets/history_item_tile.dart';
 
-class HistoryScreen extends ConsumerStatefulWidget {
+class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
   @override
-  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
-}
-
-class _HistoryScreenState extends ConsumerState<HistoryScreen> {
-  String _viewMode = 'Borrowing'; // or 'Lending'
-
-  Future<void> _updateStatus(String loanId, String status) async {
-    try {
-      await ref.read(loansProvider.notifier).updateLoanStatus(loanId, status);
-      // Refresh resources to update availability status in the UI
-      await ref.read(resourcesProvider.notifier).refresh();
-      
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Loan status updated to $status')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update status: $e')),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final loansAsync = ref.watch(loansProvider);
-    final currentUser = ref.watch(authProvider).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -62,116 +36,76 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           ),
         ],
       ),
-      body: loansAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (loans) {
-          final userId = currentUser?.id ?? '';
-          
-          final filteredLoans = _viewMode == 'Borrowing'
-              ? loans.where((l) => l.borrowerId == userId).toList()
-              : loans.where((l) => l.ownerId == userId).toList();
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: loansAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Text('Error: $e'),
+          data: (loans) {
+            final completed = loans.where((l) => l.isReturned || l.isCancelled || l.isRejected).toList();
+            final active = loans.where((l) => l.isActive || l.isApproved || l.isPending).toList();
 
-          final active = filteredLoans.where((l) => l.isActive || l.isApproved || l.isPending).toList();
-          final completed = filteredLoans.where((l) => l.isReturned || l.isCancelled || l.isRejected).toList();
-
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SegmentedButton<String>(
-                  segments: const [
-                    ButtonSegment(value: 'Borrowing', label: Text('Borrowing'), icon: Icon(Icons.download)),
-                    ButtonSegment(value: 'Lending', label: Text('Lending'), icon: Icon(Icons.upload)),
-                  ],
-                  selected: {_viewMode},
-                  onSelectionChanged: (val) => setState(() => _viewMode = val.first),
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (active.isNotEmpty) ...[
-                        const Text(
-                          'ACTIVE REQUESTS',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color.fromARGB(255, 73, 83, 95),
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ...active.map((loan) {
-                          final isOwner = loan.ownerId == userId;
-                          return HistoryItemTile(
-                            itemName: loan.title,
-                            borrower: isOwner ? loan.borrowerName : loan.ownerName,
-                            period: loan.dateText,
-                            stateLabel: loan.statusText,
-                            stateColor: Color(loan.statusColorArgb),
-                            isOwner: isOwner,
-                            onApprove: (isOwner && loan.isPending) ? () => _updateStatus(loan.id, 'APPROVED') : null,
-                            onReject: (isOwner && loan.isPending) ? () => _updateStatus(loan.id, 'REJECTED') : null,
-                            onCancel: (!isOwner && loan.isPending) ? () => _updateStatus(loan.id, 'CANCELLED') : null,
-                            onReturn: (isOwner && loan.isApproved) ? () => _updateStatus(loan.id, 'RETURNED') : null,
-                          );
-                        }),
-                        const SizedBox(height: 24),
-                      ],
-                      if (completed.isNotEmpty) ...[
-                        const Text(
-                          'COMPLETED',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color.fromARGB(255, 73, 83, 95),
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ...completed.map((loan) {
-                          final isOwner = loan.ownerId == userId;
-                          return HistoryItemTile(
-                            itemName: loan.title,
-                            borrower: isOwner ? loan.borrowerName : loan.ownerName,
-                            period: loan.dateText,
-                            stateLabel: loan.statusText,
-                            stateColor: Color(loan.statusColorArgb),
-                            isOwner: isOwner,
-                          );
-                        }),
-                        const SizedBox(height: 18),
-                      ],
-                      if (filteredLoans.isEmpty)
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(40.0),
-                            child: Column(
-                              children: [
-                                Icon(Icons.history, size: 64, color: Colors.grey.shade300),
-                                const SizedBox(height: 16),
-                                Text(
-                                  _viewMode == 'Borrowing' 
-                                    ? 'You haven\'t borrowed anything yet.' 
-                                    : 'You haven\'t lent anything yet.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.grey.shade600),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Your Impact',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 22, 36, 52),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 18),
+                  if (completed.isNotEmpty) ...[
+                    const Text(
+                      'COMPLETED',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 73, 83, 95),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...completed.map((loan) => HistoryItemTile(
+                      itemName: loan.title,
+                      borrower: loan.borrowerName,
+                      period: loan.dateText,
+                      stateLabel: loan.statusText,
+                      stateColor: Color(loan.statusColorArgb),
+                    )),
+                    const SizedBox(height: 18),
+                  ],
+                  if (active.isNotEmpty) ...[
+                    const Text(
+                      'ACTIVE',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 73, 83, 95),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...active.map((loan) => HistoryItemTile(
+                      itemName: loan.title,
+                      borrower: loan.borrowerName,
+                      period: loan.dateText,
+                      stateLabel: loan.statusText,
+                      stateColor: Color(loan.statusColorArgb),
+                    )),
+                    const SizedBox(height: 18),
+                  ],
+                  if (completed.isEmpty && active.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Text('No loan history yet. Start sharing!'),
+                    ),
+                ],
               ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
       bottomNavigationBar: Container(
         height: 74,
@@ -195,7 +129,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               isActive: true,
             ),
             GestureDetector(
-              onTap: () => context.push('/help-center'),
+              onTap: () {},
               child: const _HistoryNavItem(
                   icon: Icons.help_outline, label: 'HELP'),
             ),

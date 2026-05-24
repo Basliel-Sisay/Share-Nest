@@ -81,7 +81,7 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
               leading: const Icon(Icons.photo_camera),
               title: const Text('Take a photo'),
               onTap: () {
-                ctx.pop();
+                Navigator.pop(ctx);
                 _pickImage(ImageSource.camera);
               },
             ),
@@ -89,7 +89,7 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
               leading: const Icon(Icons.photo_library),
               title: const Text('Choose from gallery'),
               onTap: () {
-                ctx.pop();
+                Navigator.pop(ctx);
                 _pickImage(ImageSource.gallery);
               },
             ),

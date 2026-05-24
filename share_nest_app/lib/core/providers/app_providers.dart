@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../core/database/database_helper.dart';
-import '../../core/network/api_client.dart';
+import '../network/api_client.dart';
+import '../database/database_helper.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../data/datasources/loan_local_datasource.dart';
 import '../../data/datasources/loan_remote_datasource.dart';
@@ -19,7 +18,6 @@ import '../../data/repositories/resource_repository.dart';
 
 export '../../features/auth/presentation/controllers/auth_controller.dart';
 
-// Settings Provider
 class SettingsNotifier extends Notifier<bool> {
   static const _key = 'notifyNewProducts';
   late SharedPreferences _prefs;
@@ -43,7 +41,6 @@ class SettingsNotifier extends Notifier<bool> {
 
 final settingsProvider = NotifierProvider<SettingsNotifier, bool>(SettingsNotifier.new);
 
-// API Provider
 final apiClientProvider = Provider<ApiClient>((ref) {
   final authState = ref.watch(authProvider);
   final token = authState.user?.token;
@@ -51,7 +48,6 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();
 });
 
-// Repository Providers
 final resourceRepositoryProvider = Provider<ResourceRepository>((ref) {
   final db = ref.watch(databaseHelperProvider);
   final client = ref.watch(apiClientProvider);
@@ -79,7 +75,6 @@ final reservationRepositoryProvider = Provider<ReservationRepository>((ref) {
   );
 });
 
-// Notifiers
 class ResourcesNotifier extends AsyncNotifier<List<ResourceItem>> {
   @override
   Future<List<ResourceItem>> build() async {
@@ -205,7 +200,7 @@ final browseCategoryProvider = NotifierProvider<BrowseCategoryNotifier, String>(
   BrowseCategoryNotifier.new,
 );
 
-class HomeSearchNotifier extends Notifier<String> {
+class HomeSearchNotifier extends Notifier<String>{
   @override
   String build() => '';
 
@@ -220,7 +215,7 @@ final reservationDraftProvider =
   ReservationDraftNotifier.new,
 );
 
-class ReservationDraft {
+class ReservationDraft{
   const ReservationDraft({
     required this.resourceId,
     required this.resourceTitle,
@@ -230,7 +225,7 @@ class ReservationDraft {
   final String resourceTitle;
 }
 
-class ReservationDraftNotifier extends Notifier<ReservationDraft?> {
+class ReservationDraftNotifier extends Notifier<ReservationDraft?>{
   @override
   ReservationDraft? build() => null;
 

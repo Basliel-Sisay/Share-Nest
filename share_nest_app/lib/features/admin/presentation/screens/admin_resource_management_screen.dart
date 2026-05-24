@@ -72,9 +72,9 @@ class _AdminResourceManagementScreenState extends ConsumerState<AdminResourceMan
         title: const Text('Admin: Delete Resource'),
         content: Text('Delete "${resource.title}" as admin?'),
         actions: [
-          TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
-            onPressed: () => ctx.pop(true),
+            onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],

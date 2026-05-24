@@ -57,9 +57,9 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
         title: const Text('Delete User'),
         content: Text('Delete user "$name" and all their data?'),
         actions: [
-          TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           TextButton(
-            onPressed: () => ctx.pop(true),
+            onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
