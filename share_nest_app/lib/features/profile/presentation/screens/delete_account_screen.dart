@@ -29,12 +29,12 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
         content: const Text("This cannot be undone."),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text("Cancel"),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
+              context.pop();
               await ref.read(authProvider.notifier).deleteAccount();
               if (!context.mounted) return;
               context.pushReplacement('/account-deleted');

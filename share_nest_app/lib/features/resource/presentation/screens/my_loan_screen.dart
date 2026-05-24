@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/app_providers.dart';
+import '../../../../core/widgets/resource_image.dart';
 import '../../../../data/models/loan_item.dart';
 import '../../../../data/models/reservation_item.dart';
 import '../widgets/loan_item_card.dart';
@@ -69,9 +71,9 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
         title: const Text('Cancel Reservation'),
         content: const Text('Are you sure you want to cancel this reservation?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('No')),
+          TextButton(onPressed: () => ctx.pop(false), child: const Text('No')),
           TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () => ctx.pop(true),
             child: const Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
           ),
         ],
@@ -113,7 +115,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.check_circle, color: Colors.green),
                 title: const Text('Confirm Reservation'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _confirmReservation(r.id);
                 },
               ),
@@ -121,7 +123,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.cancel, color: Colors.red),
                 title: const Text('Reject Reservation'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _cancelReservation(r.id);
                 },
               ),
@@ -131,7 +133,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.cancel_outlined, color: Colors.orange),
                 title: const Text('Cancel'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _cancelReservation(r.id);
                 },
               ),
@@ -157,7 +159,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.check_circle, color: Colors.green),
                 title: const Text('Confirm'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _updateLoanStatus(loan.id, 'CONFIRMED');
                 },
               ),
@@ -165,7 +167,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.cancel, color: Colors.red),
                 title: const Text('Reject'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _updateLoanStatus(loan.id, 'REJECTED');
                 },
               ),
@@ -175,7 +177,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.cancel_outlined, color: Colors.orange),
                 title: const Text('Cancel'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _updateLoanStatus(loan.id, 'CANCELLED');
                 },
               ),
@@ -185,7 +187,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.check_circle_outline, color: Colors.grey),
                 title: const Text('Mark as Returned'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _updateLoanStatus(loan.id, 'RETURNED');
                 },
               ),
@@ -195,7 +197,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                 leading: const Icon(Icons.update, color: Colors.blue),
                 title: const Text('Extend Loan'),
                 onTap: () {
-                  Navigator.pop(ctx);
+                  ctx.pop();
                   _extendLoan(loan.id, loan.returnDate);
                 },
               ),
@@ -392,6 +394,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                         if (reservations.isEmpty) {
                           return const Text('No reservations yet.');
                         }
+                        final allResources = ref.watch(resourcesProvider);
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -405,21 +408,33 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                             ),
                             const SizedBox(height: 16),
                             ...reservations.map(
-                              (r) => _ReservationCard(
-                                title: r.title,
-                                status: r.status,
-                                location: r.pickupLocation,
-                                dateRange: r.dateRangeLabel,
-                                distance: r.distance,
-                                onViewDetails: () =>
-                                    context.push('/item/${r.resourceId}'),
-                                onCancel: r.isPending || r.isConfirmed
-                                    ? () => _cancelReservation(r.id)
-                                    : null,
-                                onManage: (currentUser != null && (r.ownerId == currentUser.id || currentUser.role == 'admin') && r.isPending)
-                                    ? () => _showReservationActions(r, currentUser.id, currentUser.role)
-                                    : null,
-                              ),
+                              (r) {
+                                final imagePath = allResources.maybeWhen(
+                                  data: (resources) {
+                                    final resource = resources.firstWhereOrNull(
+                                      (res) => res.id == r.resourceId,
+                                    );
+                                    return resource?.imagePath ?? 'assets/images/drill.png';
+                                  },
+                                  orElse: () => 'assets/images/drill.png',
+                                );
+                                return _ReservationCard(
+                                  title: r.title,
+                                  status: r.status,
+                                  location: r.pickupLocation,
+                                  dateRange: r.dateRangeLabel,
+                                  distance: r.distance,
+                                  imagePath: imagePath,
+                                  onViewDetails: () =>
+                                      context.push('/item/${r.resourceId}'),
+                                  onCancel: r.isPending || r.isConfirmed
+                                      ? () => _cancelReservation(r.id)
+                                      : null,
+                                  onManage: (currentUser != null && (r.ownerId == currentUser.id || currentUser.role == 'admin') && r.isPending)
+                                      ? () => _showReservationActions(r, currentUser.id, currentUser.role)
+                                      : null,
+                                );
+                              },
                             ),
                           ],
                         );
@@ -446,13 +461,24 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                             style: TextStyle(color: AppColors.textGrey),
                           );
                         }
-                          final r = reservations.first;
+                        final r = reservations.first;
+                        final allResources = ref.watch(resourcesProvider);
+                        final imagePath = allResources.maybeWhen(
+                          data: (resources) {
+                            final resource = resources.firstWhereOrNull(
+                              (res) => res.id == r.resourceId,
+                            );
+                            return resource?.imagePath ?? 'assets/images/drill.png';
+                          },
+                          orElse: () => 'assets/images/drill.png',
+                        );
                         return _ReservationCard(
                           title: r.title,
                           status: r.status,
                           location: r.pickupLocation,
                           dateRange: r.dateRangeLabel,
                           distance: r.distance,
+                          imagePath: imagePath,
                           onViewDetails: () =>
                               context.push('/item/${r.resourceId}'),
                           onCancel: r.isPending || r.isConfirmed
@@ -482,6 +508,7 @@ class _ReservationCard extends StatelessWidget {
     required this.location,
     required this.dateRange,
     required this.distance,
+    required this.imagePath,
     required this.onViewDetails,
     this.onCancel,
     this.onManage,
@@ -492,6 +519,7 @@ class _ReservationCard extends StatelessWidget {
   final String location;
   final String dateRange;
   final String distance;
+  final String imagePath;
   final VoidCallback onViewDetails;
   final VoidCallback? onCancel;
   final VoidCallback? onManage;
@@ -514,10 +542,14 @@ class _ReservationCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.chair_alt_outlined,
-              color: AppColors.textGrey,
-              size: 40,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: ResourceImage(
+                path: imagePath,
+                height: 80,
+                width: 80,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(height: 12),
