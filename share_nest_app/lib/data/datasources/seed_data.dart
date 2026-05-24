@@ -152,17 +152,6 @@ class SeedData {
           statusText: 'Available Today',
         ),
       ];
-          ownerName: 'Community Hub',
-          distance: '0.8 Km',
-          rating: 4.7,
-          category: 'Furniture',
-          description: 'Set of 10 folding event chairs for parties and gatherings',
-          imagePath: 'assets/images/plastic chairs.jpg',
-          location: 'Jemo 1',
-          condition: 'Clean and sturdy',
-          statusText: 'Available Today',
-        ),
-      ];
 
   static List<LoanItem> loans() {
     final dueSoon = DateTime.now().add(const Duration(days: 2));
