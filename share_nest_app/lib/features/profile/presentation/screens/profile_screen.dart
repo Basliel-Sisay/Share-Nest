@@ -113,9 +113,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: "Sharing History",
                 onTap: () => context.push('/history'),
               ),
-              _menuItem(icon: Icons.help, title: "Help Center", onTap: () {}),
-              const SizedBox(height: 20),
-              if (authState.isLoading)
+              _menuItem(
+                icon: Icons.help,
+                title: "Help Center",
+                onTap: () => context.push('/help-center'),
+              ),
+              const SizedBox(height: 20),              if (authState.isLoading)
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: CircularProgressIndicator(),

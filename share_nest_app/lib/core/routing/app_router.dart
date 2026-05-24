@@ -10,6 +10,7 @@ import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/item/presentation/screens/item_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
+import '../../features/profile/presentation/screens/help_center.dart';
 import '../../features/profile/presentation/screens/delete_account_screen.dart';
 import '../../features/profile/presentation/screens/account_deleted_screen.dart';
 import '../../features/resource/presentation/screens/add_resource_screen.dart';
@@ -145,6 +146,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/settings',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/help-center',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const HelpCenterScreen(),
       ),
       GoRoute(
         path: '/delete-account',
