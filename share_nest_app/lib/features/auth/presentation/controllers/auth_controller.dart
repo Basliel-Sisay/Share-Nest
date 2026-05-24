@@ -85,6 +85,15 @@ class AuthNotifier extends Notifier<AuthState>{
     }
   }
 
+  Future<void> updateProfileImage(String imagePath) async {
+    final user = state.user;
+    if (user != null) {
+      final repo = ref.read(authRepositoryProvider);
+      await repo.updateProfileImage(user.id, imagePath);
+      state = state.copyWith(user: user.copyWith(imagePath: imagePath));
+    }
+  }
+
   Future<void> logout() async{
     final repo = ref.read(authRepositoryProvider);
     await repo.logout();

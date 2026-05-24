@@ -5,6 +5,7 @@ class UserModel {
     required this.email,
     this.role = 'user',
     this.token,
+    this.imagePath,
   });
 
   final String id;
@@ -12,6 +13,7 @@ class UserModel {
   final String email;
   final String role;
   final String? token;
+  final String? imagePath;
 
   bool get isOwner => role == 'owner';
 
@@ -21,6 +23,7 @@ class UserModel {
         'email': email,
         'role': role,
         'token': token ?? '',
+        'imagePath': imagePath ?? '',
       };
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -32,6 +35,9 @@ class UserModel {
       token: (map['token'] as String?)?.isNotEmpty == true
           ? map['token'] as String
           : null,
+      imagePath: (map['imagePath'] as String?)?.isNotEmpty == true
+          ? map['imagePath'] as String
+          : null,
     );
   }
 
@@ -41,16 +47,18 @@ class UserModel {
       name: json['name'] as String,
       email: json['email'] as String,
       role: (json['role'] as String?) ?? 'user',
+      imagePath: json['imagePath'] as String?,
     );
   }
 
-  UserModel copyWith({String? token, String? role}) {
+  UserModel copyWith({String? token, String? role, String? imagePath}) {
     return UserModel(
       id: id,
       name: name,
       email: email,
       role: role ?? this.role,
       token: token ?? this.token,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 }

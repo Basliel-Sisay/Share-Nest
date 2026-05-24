@@ -60,6 +60,14 @@ class AuthRepository{
     await _local.deleteUser();
   }
 
+  Future<void> updateProfileImage(String userId, String imagePath) async {
+    final cached = await _local.getUser();
+    if (cached != null && cached.id == userId) {
+      final updatedUser = cached.copyWith(imagePath: imagePath);
+      await _local.saveUser(updatedUser);
+    }
+  }
+
   Future<void> logout() async{
     await _local.deleteUser();
   }

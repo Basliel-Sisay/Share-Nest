@@ -1,11 +1,29 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/providers/app_providers.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      await ref.read(authProvider.notifier).updateProfileImage(pickedFile.path);
+    }
+  }
 
   void _deleteAccount(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
@@ -29,7 +47,7 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
     final resourcesAsync = ref.watch(resourcesProvider);
@@ -45,10 +63,23 @@ class ProfileScreen extends ConsumerWidget {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              const CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, size: 50),
+              GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: (user?.imagePath != null)
+                      ? (kIsWeb
+                          ? NetworkImage(user!.imagePath!)
+                          : File(user!.imagePath!).existsSync()
+                              ? FileImage(File(user.imagePath!))
+                              : null) as ImageProvider
+                      : null,
+                  child: (user?.imagePath == null ||
+                          (!kIsWeb && !File(user!.imagePath!).existsSync()))
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
+                ),
               ),
               const SizedBox(height: 10),
               Text(

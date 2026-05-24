@@ -11,7 +11,7 @@ class DatabaseHelper{
   DatabaseHelper._();
   static final DatabaseHelper instance = DatabaseHelper._();
   static const _dbName = 'share_nest.db';
-  static const _dbVersion = 4;
+  static const _dbVersion = 5;
   Database? _database;
 
   Future<Database> get database async{
@@ -86,6 +86,9 @@ class DatabaseHelper{
       await _addColumnIfNotExists(
           db, 'users', 'role TEXT NOT NULL DEFAULT "user"');
     }
+    if (oldVersion < 5){
+      await _addColumnIfNotExists(db, 'users', 'imagePath TEXT');
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async{
@@ -131,7 +134,8 @@ class DatabaseHelper{
         name TEXT NOT NULL,
         email TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'user',
-        token TEXT NOT NULL DEFAULT ''
+        token TEXT NOT NULL DEFAULT '',
+        imagePath TEXT
       )
     ''');
     await db.execute('''
