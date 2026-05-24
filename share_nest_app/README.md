@@ -2,7 +2,7 @@
 
 Share Nest App is a Flutter-based mobile application designed to provide a simple and modern platform for sharing and connecting users.
 
-## 🚀 Getting Started
+##  Getting Started
 
 This project is built using Flutter.
 
@@ -15,7 +15,7 @@ Before running the project, make sure you have installed:
 - Android Studio or VS Code
 - Android Emulator or Physical Device
 
-## ▶️ Run the Project
+##  Run the Project
 
 Clone the repository and run the following commands:
 
