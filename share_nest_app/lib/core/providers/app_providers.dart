@@ -55,7 +55,6 @@ class ResourcesNotifier extends AsyncNotifier<List<ResourceItem>> {
   @override
   Future<List<ResourceItem>> build() async {
     final repo = ref.watch(resourceRepositoryProvider);
-    // Force a one-time refresh to clear stale local image paths
     return repo.refreshFromNetwork();
   }
 
@@ -245,3 +244,4 @@ String slugifyTitle(String title) {
       .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
       .replaceAll(RegExp(r'^-|-$'), '');
 }
+
