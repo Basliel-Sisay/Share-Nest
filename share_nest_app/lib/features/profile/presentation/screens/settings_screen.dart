@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/providers/app_providers.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      await ref.read(authProvider.notifier).updateProfileImage(pickedFile.path);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile picture updated')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final notifyNewProducts = ref.watch(settingsProvider);
 
     return Scaffold(
@@ -30,7 +50,7 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.person,
             title: "Profile Settings",
             subtitle: "Update photo and info",
-            onTap: () {},
+            onTap: _pickImage,
           ),
           const SizedBox(height: 12),
           Container(
