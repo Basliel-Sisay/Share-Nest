@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/app_providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -118,7 +119,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: "Help Center",
                 onTap: () => context.push('/help-center'),
               ),
-              const SizedBox(height: 20),              if (authState.isLoading)
+              const SizedBox(height: 88),
+              if (authState.isLoading)
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: CircularProgressIndicator(),
@@ -131,18 +133,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     style: const TextStyle(color: Colors.red),
                   ),
                 ),
-              TextButton(
-                onPressed: authState.isLoading ? null : () => _deleteAccount(context, ref),
-                child: const Text(
-                  "Delete Account",
-                  style: TextStyle(color: Colors.red),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => ref.read(authProvider.notifier).logout(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryGreen,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Logout"),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () => ref.read(authProvider.notifier).logout(),
+                onPressed: authState.isLoading ? null : () => _deleteAccount(context, ref),
                 child: const Text(
-                  "Logout",
+                  "Delete Account",
                   style: TextStyle(color: Colors.red),
                 ),
               ),
