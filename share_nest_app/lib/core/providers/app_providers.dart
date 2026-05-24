@@ -1,6 +1,29 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/database/database_helper.dart';
+// ... existing code ...
+
+class SettingsNotifier extends Notifier<bool> {
+  static const _key = 'notifyNewProducts';
+  late SharedPreferences _prefs;
+
+  @override
+  bool build() {
+    _init();
+    return false;
+  }
+
+  Future<void> _init() async {
+    _prefs = await SharedPreferences.getInstance();
+    state = _prefs.getBool(_key) ?? false;
+  }
+
+  Future<void> toggleNotification(bool value) async {
+    state = value;
+    await _prefs.setBool(_key, value);
+  }
+}
+
+final settingsProvider = NotifierProvider<SettingsNotifier, bool>(SettingsNotifier.new);
 import '../../core/network/api_client.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../data/datasources/loan_local_datasource.dart';

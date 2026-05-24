@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SettingsScreen extends StatefulWidget {
+import '../../../../core/providers/app_providers.dart';
+
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifyNewProducts = ref.watch(settingsProvider);
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool notifyNewProducts = false;
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Settings")),
       body: ListView(
@@ -22,25 +20,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             "Account Preferences",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-
           const SizedBox(height: 4),
-
           const Text(
             "Manage your account settings",
             style: TextStyle(color: Colors.grey),
           ),
-
           const SizedBox(height: 20),
-
           _SimpleCard(
             icon: Icons.person,
             title: "Profile Settings",
             subtitle: "Update photo and info",
             onTap: () {},
           ),
-
           const SizedBox(height: 12),
-
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -58,35 +50,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Switch(
                   value: notifyNewProducts,
                   onChanged: (value) {
-                    setState(() {
-                      notifyNewProducts = value;
-                    });
+                    ref.read(settingsProvider.notifier).toggleNotification(value);
                   },
                 ),
               ],
             ),
           ),
-
           const SizedBox(height: 12),
-
           _SimpleCard(
             icon: Icons.lock,
             title: "Privacy & Security",
             subtitle: "Manage your security",
             onTap: () {},
           ),
-
           const SizedBox(height: 12),
-
           _SimpleCard(
             icon: Icons.language,
             title: "Language",
             subtitle: "English (US)",
             onTap: () {},
           ),
-
           const SizedBox(height: 30),
-
           const Text(
             "Danger Zone",
             style: TextStyle(
@@ -95,9 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.red,
             ),
           ),
-
           const SizedBox(height: 10),
-
           _SimpleCard(
             icon: Icons.delete,
             title: "Delete Account",
