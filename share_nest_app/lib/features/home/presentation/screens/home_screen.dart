@@ -28,6 +28,19 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final resourcesAsync = ref.watch(resourcesProvider);
     final searchQuery = ref.watch(homeSearchProvider);
+    // Define the required order of resource IDs
+    const requiredOrder = [
+      'woodworking-kit',
+      'python-programming',
+      'power-drill',
+      'english-textbook',
+      'book-of-daniel',
+      'camping-tent',
+      'step-ladder',
+      'book-of-moses',
+      'kitchen-kits',
+      'plastic-chairs',
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +94,13 @@ class HomeScreen extends ConsumerWidget {
                 ? featured
                 : allResources.where((r) => r.isAvailable).toList();
 
-            if (nearYou.isEmpty) {
+            // Sort nearYou by requiredOrder
+            final sortedNearYou = [
+              for (final id in requiredOrder)
+                ...nearYou.where((r) => r.id == id)
+            ];
+
+            if (sortedNearYou.isEmpty) {
               return const Center(child: Text('No resources available yet'));
             }
 
@@ -119,7 +138,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  ...nearYou.map((resource) {
+                  ...sortedNearYou.map((resource) {
                     final isPrimary = resource.category == 'Tools';
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),

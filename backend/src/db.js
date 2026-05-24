@@ -121,8 +121,4 @@ function transaction(fn){
     }
   };
 }
-module.exports = {
-  prepare,
-  transaction,
-  exec: (sql) => database.exec(sql),
-};
+module.exports = {prepare,transaction,exec: (sql) => database.exec(sql)};

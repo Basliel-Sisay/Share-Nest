@@ -43,7 +43,7 @@ class HomeItemCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: SizedBox(
-                height: 88,
+                height: 160,
                 width: double.infinity,
                 child: ResourceImage(path: imagePath, fit: BoxFit.contain),
               ),

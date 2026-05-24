@@ -64,17 +64,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/drill.png
+    - assets/images/wood_kit.jpg
     - assets/images/python_book.png
-    - assets\images\wood kit.jpg
-    - assets/images/kitchen kits.jpg
+    - assets/images/drill.png
     - assets/images/english.jpg
-    - assets/images/plastic chairs.jpg
+    - assets/images/book_of_daniel.jpg
     - assets/images/tent.png
     - assets/images/ladder.png
-    - assets/images/juice_extractor.png
-    - assets/images/book of moses.jpg
-    - assets/images/book_of_daniel.jpg
+    - assets/images/book_of_moses.jpg
+    - assets/images/kitchen_kits.jpg
+    - assets/images/plastic_chairs.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

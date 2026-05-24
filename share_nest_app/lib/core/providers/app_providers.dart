@@ -177,7 +177,7 @@ final browseCategoryProvider = NotifierProvider<BrowseCategoryNotifier, String>(
   BrowseCategoryNotifier.new,
 );
 
-class HomeSearchNotifier extends Notifier<String> {
+class HomeSearchNotifier extends Notifier<String>{
   @override
   String build() => '';
 
@@ -192,7 +192,7 @@ final reservationDraftProvider =
   ReservationDraftNotifier.new,
 );
 
-class ReservationDraft {
+class ReservationDraft{
   const ReservationDraft({
     required this.resourceId,
     required this.resourceTitle,
@@ -202,7 +202,7 @@ class ReservationDraft {
   final String resourceTitle;
 }
 
-class ReservationDraftNotifier extends Notifier<ReservationDraft?> {
+class ReservationDraftNotifier extends Notifier<ReservationDraft?>{
   @override
   ReservationDraft? build() => null;
 
