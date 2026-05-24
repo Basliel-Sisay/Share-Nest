@@ -43,7 +43,8 @@ class AuthRepository{
 
     try {
       final fresh = await _remote.fetchMe(cached.token!);
-      final user = fresh.copyWith(token: cached.token);
+      // Merge new remote data with cached imagePath
+      final user = fresh.copyWith(token: cached.token, imagePath: cached.imagePath);
       await _local.saveUser(user);
       return user;
     } 
