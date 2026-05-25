@@ -74,6 +74,7 @@ class HistoryScreen extends ConsumerWidget {
                       period: loan.dateText,
                       stateLabel: loan.statusText,
                       stateColor: Color(loan.statusColorArgb),
+                      imagePath: loan.imagePath,
                     )),
                     const SizedBox(height: 18),
                   ],
@@ -93,6 +94,7 @@ class HistoryScreen extends ConsumerWidget {
                       period: loan.dateText,
                       stateLabel: loan.statusText,
                       stateColor: Color(loan.statusColorArgb),
+                      imagePath: loan.imagePath,
                     )),
                     const SizedBox(height: 18),
                   ],
@@ -129,7 +131,7 @@ class HistoryScreen extends ConsumerWidget {
               isActive: true,
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => context.go('/help-center'),
               child: const _HistoryNavItem(
                   icon: Icons.help_outline, label: 'HELP'),
             ),
