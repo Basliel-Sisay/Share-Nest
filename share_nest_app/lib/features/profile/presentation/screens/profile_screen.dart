@@ -20,31 +20,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       await ref.read(authProvider.notifier).updateProfileImage(pickedFile.path);
     }
-  }
-
-  void _deleteAccount(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Account'),
-        content: const Text(
-          'This will permanently delete your account and all associated data. Are you sure?',
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
-    await ref.read(authProvider.notifier).deleteAccount();
   }
 
   @override
@@ -149,7 +129,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: authState.isLoading ? null : () => _deleteAccount(context, ref),
+                onPressed: authState.isLoading
+                    ? null
+                    : () => context.push('/delete-account'),
                 child: const Text(
                   "Delete Account",
                   style: TextStyle(color: Colors.red),

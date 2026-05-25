@@ -11,7 +11,7 @@ import '../../features/item/presentation/screens/item_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
 import '../../features/profile/presentation/screens/help_center.dart';
-import '../../features/profile/presentation/screens/delete_account_screen.dart';
+import '../../features/profile/presentation/screens/confirm_delete_account_screen.dart';
 import '../../features/profile/presentation/screens/account_deleted_screen.dart';
 import '../../features/resource/presentation/screens/add_resource_screen.dart';
 import '../../features/resource/presentation/screens/browse_resources_screen.dart';
@@ -53,13 +53,13 @@ class AuthListenable extends ChangeNotifier {
   }
 }
 
-final authListenableProvider = Provider<AuthListenable>((ref) {
+final authListenableProvider = Provider<AuthListenable>((ref){
   final listenable = AuthListenable(ref);
   ref.onDispose(listenable.dispose);
   return listenable;
 });
 
-final appRouterProvider = Provider<GoRouter>((ref) {
+final appRouterProvider = Provider<GoRouter>((ref){
   final listenable = ref.watch(authListenableProvider);
 
   return GoRouter(
@@ -155,7 +155,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/delete-account',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const DeleteAccountScreen(),
+        builder: (context, state) => const ConfirmDeleteAccountScreen(),
       ),
       GoRoute(
         path: '/account-deleted',
