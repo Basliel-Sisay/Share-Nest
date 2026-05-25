@@ -14,11 +14,13 @@ class HomeScreen extends ConsumerWidget {
     WidgetRef ref, {
     required String resourceId,
     required String title,
+    required String imagePath,
   }) {
     ref.read(reservationDraftProvider.notifier).setDraft(
           ReservationDraft(
             resourceId: resourceId,
             resourceTitle: title,
+            imagePath: imagePath,
           ),
         );
     context.push('/reservation');
@@ -158,6 +160,7 @@ class HomeScreen extends ConsumerWidget {
                               ref,
                               resourceId: resource.id,
                               title: resource.title,
+                              imagePath: resource.imagePath,
                             );
                           } else {
                             context.push('/item/${resource.id}');

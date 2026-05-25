@@ -219,10 +219,12 @@ class ReservationDraft{
   const ReservationDraft({
     required this.resourceId,
     required this.resourceTitle,
+    this.imagePath,
   });
 
   final String resourceId;
   final String resourceTitle;
+  final String? imagePath;
 }
 
 class ReservationDraftNotifier extends Notifier<ReservationDraft?>{

@@ -13,15 +13,19 @@ class ItemDetailScreen extends ConsumerWidget {
 
   final String resourceId;
 
-  void _startReservation(BuildContext context, WidgetRef ref, String title) {
+  void _startReservation(BuildContext context, WidgetRef ref, String title, String imagePath) {
     ref.read(reservationDraftProvider.notifier).setDraft(
-          ReservationDraft(resourceId: resourceId, resourceTitle: title),
+          ReservationDraft(
+            resourceId: resourceId,
+            resourceTitle: title,
+            imagePath: imagePath,
+          ),
         );
     context.push('/reservation');
   }
 
   Future<void> _requestBorrow(
-      BuildContext context, WidgetRef ref, String title, String ownerId, String ownerName) async {
+      BuildContext context, WidgetRef ref, String title, String ownerId, String ownerName, String imagePath) async {
     final user = ref.watch(authProvider).user;
     if (user == null) return;
 
@@ -60,6 +64,7 @@ class ItemDetailScreen extends ConsumerWidget {
       dateText: 'Pending confirmation',
       pickupDate: pickupDt,
       returnDate: returnDt,
+      imagePath: imagePath,
       pickupTime: timeFormat.format(pickupDt),
       returnTime: timeFormat.format(returnDt),
       statusColorArgb: 0xFFF3E5F5,
@@ -279,6 +284,7 @@ class ItemDetailScreen extends ConsumerWidget {
                                     context,
                                     ref,
                                     resource.title,
+                                    resource.imagePath,
                                   ),
                                   child: const Text('Reserve Now'),
                                 ),
@@ -299,6 +305,7 @@ class ItemDetailScreen extends ConsumerWidget {
                                     resource.title,
                                     resource.ownerId,
                                     resource.ownerName,
+                                    resource.imagePath,
                                   ),
                                   child: const Text('Request to Borrow'),
                                 ),

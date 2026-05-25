@@ -12,6 +12,7 @@ class ReservationItem {
     required this.returnTime,
     this.distance = '0.8 Km away',
     this.status = 'PENDING',
+    this.imagePath,
   });
 
   final String id;
@@ -26,6 +27,7 @@ class ReservationItem {
   final String returnTime;
   final String distance;
   final String status;
+  final String? imagePath;
 
   bool get isPending => status == 'PENDING';
   bool get isConfirmed => status == 'CONFIRMED';
@@ -58,6 +60,7 @@ class ReservationItem {
         'return_time': returnTime,
         'distance': distance,
         'status': status,
+        'image_path': imagePath,
       };
 
   factory ReservationItem.fromMap(Map<String, dynamic> map) {
@@ -74,6 +77,7 @@ class ReservationItem {
       returnTime: map['return_time'] as String? ?? '',
       distance: (map['distance'] as String?) ?? '0.8 Km away',
       status: (map['status'] as String?) ?? 'PENDING',
+      imagePath: map['image_path'] as String?,
     );
   }
 
@@ -85,6 +89,7 @@ class ReservationItem {
     String? returnTime,
     String? distance,
     String? status,
+    String? imagePath,
   }) {
     return ReservationItem(
       id: id,
@@ -99,6 +104,7 @@ class ReservationItem {
       returnTime: returnTime ?? this.returnTime,
       distance: distance ?? this.distance,
       status: status ?? this.status,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 }

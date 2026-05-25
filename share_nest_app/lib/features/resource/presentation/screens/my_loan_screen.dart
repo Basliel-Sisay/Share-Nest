@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/app_providers.dart';
+import '../../../../core/widgets/resource_image.dart';
 import '../../../../data/models/loan_item.dart';
 import '../../../../data/models/reservation_item.dart';
 import '../widgets/loan_item_card.dart';
@@ -365,6 +367,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                                 isOwner: currentUser?.id == loan.ownerId,
                                 statusText: loan.statusText,
                                 dateText: loan.dateText,
+                                imagePath: loan.imagePath,
                                 buttonText: 'Manage',
                                 statusColor: Color(loan.statusColorArgb),
                                 statusTextColor:
@@ -411,6 +414,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                                 location: r.pickupLocation,
                                 dateRange: r.dateRangeLabel,
                                 distance: r.distance,
+                                imagePath: r.imagePath,
                                 onViewDetails: () =>
                                     context.push('/item/${r.resourceId}'),
                                 onCancel: r.isPending || r.isConfirmed
@@ -453,6 +457,7 @@ class _MyLoanScreenState extends ConsumerState<MyLoanScreen> {
                           location: r.pickupLocation,
                           dateRange: r.dateRangeLabel,
                           distance: r.distance,
+                          imagePath: r.imagePath,
                           onViewDetails: () =>
                               context.push('/item/${r.resourceId}'),
                           onCancel: r.isPending || r.isConfirmed
@@ -483,6 +488,7 @@ class _ReservationCard extends StatelessWidget {
     required this.dateRange,
     required this.distance,
     required this.onViewDetails,
+    this.imagePath,
     this.onCancel,
     this.onManage,
   });
@@ -492,6 +498,7 @@ class _ReservationCard extends StatelessWidget {
   final String location;
   final String dateRange;
   final String distance;
+  final String? imagePath;
   final VoidCallback onViewDetails;
   final VoidCallback? onCancel;
   final VoidCallback? onManage;
@@ -514,10 +521,20 @@ class _ReservationCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.chair_alt_outlined,
-              color: AppColors.textGrey,
-              size: 40,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: imagePath != null
+                  ? ResourceImage(
+                      path: imagePath!,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    )
+                  : const Icon(
+                      Icons.chair_alt_outlined,
+                      color: AppColors.textGrey,
+                      size: 40,
+                    ),
             ),
           ),
           const SizedBox(height: 12),

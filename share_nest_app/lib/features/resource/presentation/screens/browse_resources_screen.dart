@@ -23,9 +23,13 @@ class _BrowseResourcesScreenState extends ConsumerState<BrowseResourcesScreen> {
     super.dispose();
   }
 
-  void _openReservation(String resourceId, String title) {
+  void _openReservation(String resourceId, String title, String imagePath) {
     ref.read(reservationDraftProvider.notifier).setDraft(
-          ReservationDraft(resourceId: resourceId, resourceTitle: title),
+          ReservationDraft(
+            resourceId: resourceId,
+            resourceTitle: title,
+            imagePath: imagePath,
+          ),
         );
     context.push('/reservation');
   }
@@ -167,7 +171,7 @@ class _BrowseResourcesScreenState extends ConsumerState<BrowseResourcesScreen> {
                             imagePath: r.imagePath,
                             onTap: () => context.push('/item/${r.id}'),
                             onRequestLoan: () =>
-                                _openReservation(r.id, r.title),
+                                _openReservation(r.id, r.title, r.imagePath),
                           ),
                         ),
                     ],

@@ -105,6 +105,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       returnDate: ret,
       pickupTime: timeFormat.format(pickup),
       returnTime: timeFormat.format(ret),
+      imagePath: draft.imagePath,
     );
 
     try {
