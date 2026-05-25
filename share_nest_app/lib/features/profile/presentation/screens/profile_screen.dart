@@ -73,8 +73,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _StatBox(title: "Resources", value: "$resourceCount"),
-                  _StatBox(title: "Loans", value: "$loanCount"),
+                  _StatBox(
+                    title: "Resources",
+                    value: "$resourceCount",
+                    onTap: () => context.go('/browse'),
+                  ),
+                  _StatBox(
+                    title: "Loans",
+                    value: "$loanCount",
+                    onTap: () => context.go('/history'),
+                  ),
                 ],
               ),
               const SizedBox(height: 30),
@@ -161,25 +169,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 class _StatBox extends StatelessWidget {
   final String title;
   final String value;
+  final VoidCallback? onTap;
 
-  const _StatBox({required this.title, required this.value});
+  const _StatBox({required this.title, required this.value, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(title),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(title),
+          ],
+        ),
       ),
     );
   }
