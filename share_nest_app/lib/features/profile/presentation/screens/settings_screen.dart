@@ -81,7 +81,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             icon: Icons.lock,
             title: "Privacy & Security",
             subtitle: "Manage your security",
-            onTap: () {},
+            onTap: () => context.push('/privacy-security'),
           ),
           const SizedBox(height: 12),
           _SimpleCard(
