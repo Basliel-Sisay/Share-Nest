@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../network/api_client.dart';
@@ -17,6 +18,30 @@ import '../../data/repositories/reservation_repository.dart';
 import '../../data/repositories/resource_repository.dart';
 
 export '../../features/auth/presentation/controllers/auth_controller.dart';
+
+class LanguageNotifier extends Notifier<Locale> {
+  static const _key = 'languageCode';
+  late SharedPreferences _prefs;
+
+  @override
+  Locale build() {
+    _init();
+    return const Locale('en');
+  }
+
+  Future<void> _init() async {
+    _prefs = await SharedPreferences.getInstance();
+    final code = _prefs.getString(_key) ?? 'en';
+    state = Locale(code);
+  }
+
+  Future<void> setLanguage(Locale locale) async {
+    state = locale;
+    await _prefs.setString(_key, locale.languageCode);
+  }
+}
+
+final languageProvider = NotifierProvider<LanguageNotifier, Locale>(LanguageNotifier.new);
 
 class SettingsNotifier extends Notifier<bool> {
   static const _key = 'notifyNewProducts';

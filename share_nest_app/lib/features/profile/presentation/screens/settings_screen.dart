@@ -27,6 +27,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Select Language"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text("English"),
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text("Amharic"),
+              onTap: () {
+                ref.read(languageProvider.notifier).setLanguage(const Locale('am'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final notifyNewProducts = ref.watch(settingsProvider);
@@ -87,8 +115,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _SimpleCard(
             icon: Icons.language,
             title: "Language",
-            subtitle: "English (US)",
-            onTap: () {},
+            subtitle: ref.watch(languageProvider).languageCode == 'am' ? 'Amharic' : 'English (US)',
+            onTap: () => _showLanguageDialog(context, ref),
           ),
           const SizedBox(height: 30),
           const Text(
