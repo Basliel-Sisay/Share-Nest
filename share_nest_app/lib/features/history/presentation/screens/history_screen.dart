@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../widgets/history_item_tile.dart';
 
@@ -18,11 +19,11 @@ class HistoryScreen extends ConsumerWidget {
         foregroundColor: const Color.fromARGB(255, 21, 125, 58),
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 21, 125, 58)),
         ),
         title: const Text(
           'Sharing History',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 21, 125, 58)),
         ),
         actions: const [
           Padding(
@@ -114,8 +115,15 @@ class HistoryScreen extends ConsumerWidget {
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 10),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 206, 206, 206),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
