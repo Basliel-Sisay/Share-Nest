@@ -152,6 +152,14 @@ class LoansNotifier extends AsyncNotifier<List<LoanItem>> {
     return ref.watch(loanRepositoryProvider).getLoans();
   }
 
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(loanRepositoryProvider);
+      return repo.getLoans();
+    });
+  }
+
   Future<void> requestLoan(Map<String, dynamic> data) async {
     final repo = ref.read(loanRepositoryProvider);
     await repo.requestLoan(data);
