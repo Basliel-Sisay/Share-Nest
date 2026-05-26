@@ -31,7 +31,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 router.post('/', authenticate, (req, res) => {
-  const { resource_id, title, owner_id, owner_name, pickup_date, return_date, pickup_time, return_time } = req.body;
+  const { resource_id, title, owner_id, owner_name, pickup_date, return_date, pickup_time, return_time, image_path } = req.body;
   if (!resource_id || !title || !owner_id || !pickup_date || !return_date) {
     return res.status(400).json({
       error: 'resource_id, title, owner_id, pickup_date, and return_date are required',
@@ -50,8 +50,8 @@ router.post('/', authenticate, (req, res) => {
   db.prepare(
     `INSERT INTO loans (id, resource_id, title, owner_id, owner_name, borrower_id, borrower_name,
       status_text, date_text, pickup_date, return_date, pickup_time, return_time,
-      status_color, status_text_color)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      status_color, status_text_color, image_path)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     id,
     resource_id,
@@ -68,6 +68,7 @@ router.post('/', authenticate, (req, res) => {
     return_time || '',
     0xFFF3E5F5,
     0xFF7B1FA2,
+    image_path || resource.image_path,
   );
 
   const saved = db.prepare('SELECT * FROM loans WHERE id = ?').get(id);

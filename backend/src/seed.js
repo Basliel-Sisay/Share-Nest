@@ -94,14 +94,14 @@ function seed() {
     db.prepare(
       `INSERT INTO loans (id, resource_id, title, owner_id, owner_name, borrower_id, borrower_name,
         status_text, date_text, pickup_date, return_date, pickup_time, return_time,
-        status_color, status_text_color)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        status_color, status_text_color, image_path)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       'loan-1', 'power-drill', 'DeWalt Power Drill',
       'user-1', 'Mike R.', 'user-1', 'Test User',
       'ACTIVE', formatReturnDate(dueSoon), new Date().toISOString(),
       dueSoon.toISOString(), '10:00 AM', '6:00 PM',
-      0xffdde8fc, 0xff1e8449,
+      0xffdde8fc, 0xff1e8449, 'assets/images/drill.png',
     );
   }
 

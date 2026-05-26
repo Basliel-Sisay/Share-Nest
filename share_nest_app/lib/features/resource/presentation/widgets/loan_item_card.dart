@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/resource_image.dart';
 
 class LoanItemCard extends StatelessWidget {
   final String title;
@@ -13,6 +13,7 @@ class LoanItemCard extends StatelessWidget {
   final Color statusColor;
   final Color statusTextColor;
   final VoidCallback onButtonPressed;
+  final String? imagePath;
 
   const LoanItemCard({
     super.key,
@@ -26,6 +27,7 @@ class LoanItemCard extends StatelessWidget {
     required this.statusColor,
     required this.statusTextColor,
     required this.onButtonPressed,
+    this.imagePath,
   });
 
   @override
@@ -57,11 +59,21 @@ class LoanItemCard extends StatelessWidget {
                   color: AppColors.cardBlue,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: AppColors.textGrey,
-                  ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: imagePath != null
+                      ? ResourceImage(
+                          path: imagePath!,
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.cover,
+                        )
+                      : const Center(
+                          child: Icon(
+                            Icons.image_outlined,
+                            color: AppColors.textGrey,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(width: 16),

@@ -11,6 +11,7 @@ class LoanItem {
     required this.dateText,
     required this.pickupDate,
     required this.returnDate,
+    required this.imagePath,
     this.pickupTime = '',
     this.returnTime = '',
     this.statusColorArgb = 0xFFF3E5F5,
@@ -28,6 +29,7 @@ class LoanItem {
   final String dateText;
   final DateTime pickupDate;
   final DateTime returnDate;
+  final String imagePath;
   final String pickupTime;
   final String returnTime;
   final int statusColorArgb;
@@ -46,6 +48,7 @@ class LoanItem {
     String? dateText,
     DateTime? returnDate,
     String? statusText,
+    String? imagePath,
   }) {
     return LoanItem(
       id: id,
@@ -59,6 +62,7 @@ class LoanItem {
       dateText: dateText ?? this.dateText,
       pickupDate: pickupDate,
       returnDate: returnDate ?? this.returnDate,
+      imagePath: imagePath ?? this.imagePath,
       pickupTime: pickupTime,
       returnTime: returnTime,
       statusColorArgb: statusColorArgb,
@@ -78,6 +82,7 @@ class LoanItem {
         'date_text': dateText,
         'pickup_date': pickupDate.toIso8601String(),
         'return_date': returnDate.toIso8601String(),
+        'image_path': imagePath,
         'pickup_time': pickupTime,
         'return_time': returnTime,
         'status_color': statusColorArgb,
@@ -97,6 +102,7 @@ class LoanItem {
       dateText: map['date_text'] as String,
       pickupDate: DateTime.parse(map['pickup_date'] as String),
       returnDate: DateTime.parse(map['return_date'] as String),
+      imagePath: (map['image_path'] as String?) ?? '',
       pickupTime: (map['pickup_time'] as String?) ?? '',
       returnTime: (map['return_time'] as String?) ?? '',
       statusColorArgb: map['status_color'] as int? ?? 0xFFF3E5F5,

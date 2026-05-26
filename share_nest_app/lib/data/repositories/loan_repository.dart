@@ -50,6 +50,7 @@ class LoanRepository {
         dateText: 'Request submitted',
         pickupDate: DateTime.parse(data['pickup_date'] as String),
         returnDate: DateTime.parse(data['return_date'] as String),
+        imagePath: data['image_path'] as String? ?? '',
         pickupTime: data['pickup_time'] as String? ?? '',
         returnTime: data['return_time'] as String? ?? '',
       );

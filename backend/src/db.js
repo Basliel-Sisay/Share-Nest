@@ -93,6 +93,7 @@ function initSchema(){
   addColumnIfMissing('loans', 'pickup_date TEXT NOT NULL DEFAULT \'\'');
   addColumnIfMissing('loans', 'pickup_time TEXT DEFAULT \'\'');
   addColumnIfMissing('loans', 'return_time TEXT DEFAULT \'\'');
+  addColumnIfMissing('loans', 'image_path TEXT DEFAULT \'\'');
   addColumnIfMissing('reservations', 'owner_id TEXT NOT NULL DEFAULT \'\'');
   addColumnIfMissing('reservations', 'borrower_id TEXT NOT NULL DEFAULT \'\'');
   addColumnIfMissing('loans', 'created_at TEXT DEFAULT \'\'');
