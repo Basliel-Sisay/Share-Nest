@@ -235,11 +235,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
                         ],
                         const SizedBox(height: 22),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 242, 243, 245),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
+                        Material(
+                          color: const Color.fromARGB(255, 242, 243, 245),
+                          borderRadius: BorderRadius.circular(18),
+                          clipBehavior: Clip.antiAlias,
                           child: CheckboxListTile(
                             controlAffinity: ListTileControlAffinity.leading,
                             value: _acceptedTerms,

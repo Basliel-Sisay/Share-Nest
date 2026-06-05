@@ -274,11 +274,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 7),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 243, 247, 243),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
+                        Material(
+                          color: const Color.fromARGB(255, 243, 247, 243),
+                          borderRadius: BorderRadius.circular(18),
+                          clipBehavior: Clip.antiAlias,
                           child: CheckboxListTile(
                             value: _rememberMe,
                             onChanged: (value) {

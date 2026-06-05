@@ -4,6 +4,7 @@ import '../constants/app_colors.dart';
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
+      fontFamily: 'sans-serif',
       scaffoldBackgroundColor: AppColors.background,
       primaryColor: AppColors.primaryGreen,
       appBarTheme: const AppBarTheme(

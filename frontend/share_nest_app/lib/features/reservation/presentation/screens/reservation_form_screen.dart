@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../../../../data/models/reservation_item.dart';
+import '../widgets/reservation_confirmation_modal.dart';
 
 class ReservationFormScreen extends ConsumerStatefulWidget {
   const ReservationFormScreen({super.key});
@@ -285,7 +286,30 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _confirm,
+                    onPressed: () {
+                      if (draft == null) return;
+                      final pickup = _dateTime(_pickupDate, _pickupTime);
+                      final ret = _dateTime(_returnDate, _returnTime);
+                      if (!ret.isAfter(pickup)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Return date must be after pick-up date'),
+                          ),
+                        );
+                        return;
+                      }
+                      showReservationModal(
+                        context: context,
+                        title: draft.resourceTitle,
+                        imagePath: draft.imagePath,
+                        date: DateFormat('dd/MM/yyyy').format(_pickupDate),
+                        time: timeFormat.format(pickup),
+                        onConfirm: () {
+                          Navigator.pop(context);
+                          _confirm();
+                        },
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       padding: const EdgeInsets.symmetric(vertical: 16),
