@@ -1,6 +1,5 @@
 import '../datasources/reservation_local_datasource.dart';
 import '../datasources/reservation_remote_datasource.dart';
-import '../datasources/seed_data.dart';
 import '../models/reservation_item.dart';
 
 class ReservationRepository {
@@ -13,20 +12,19 @@ class ReservationRepository {
   final ReservationLocalDataSource _local;
   final ReservationRemoteDataSource _remote;
 
-  Future<List<ReservationItem>> getReservations({bool forceRefresh = false}) async {
+  Future<List<ReservationItem>> getReservations(String userId, String role, {bool forceRefresh = false}) async {
     if (!forceRefresh) {
-      final cached = await _local.getAll();
+      final cached = await _local.getAll(userId, role);
       if (cached.isNotEmpty) return cached;
     }
 
     try {
       final remote = await _remote.fetchAll();
-      await _local.insertAll(remote);
-      return remote;
+      final userReservations = remote.where((r) => r.borrowerId == userId || r.ownerId == userId).toList();
+      await _local.insertAll(userReservations);
+      return userReservations;
     } catch (_) {
-      final fallback = SeedData.reservations();
-      await _local.insertAll(fallback);
-      return fallback;
+      return [];
     }
   }
 
