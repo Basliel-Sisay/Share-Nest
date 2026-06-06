@@ -149,33 +149,43 @@ final resourceByIdProvider =
 class LoansNotifier extends AsyncNotifier<List<LoanItem>> {
   @override
   Future<List<LoanItem>> build() async {
-    return ref.watch(loanRepositoryProvider).getLoans();
+    final user = ref.watch(authProvider).user;
+    if (user == null) return [];
+    return ref.watch(loanRepositoryProvider).getLoans(user.id, user.role ?? 'user');
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      final user = ref.read(authProvider).user;
+      if (user == null) return [];
       final repo = ref.read(loanRepositoryProvider);
-      return repo.getLoans();
+      return repo.getLoans(user.id, user.role ?? 'user', forceRefresh: true);
     });
   }
 
   Future<void> requestLoan(Map<String, dynamic> data) async {
     final repo = ref.read(loanRepositoryProvider);
     await repo.requestLoan(data);
-    state = await AsyncValue.guard(() => repo.getLoans());
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    state = await AsyncValue.guard(() => repo.getLoans(user.id, user.role ?? 'user'));
   }
 
   Future<void> updateLoanStatus(String loanId, String status) async {
     final repo = ref.read(loanRepositoryProvider);
-    await repo.updateLoanStatus(loanId, status);
-    state = await AsyncValue.guard(() => repo.getLoans());
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    await repo.updateLoanStatus(loanId, status, user.id);
+    state = await AsyncValue.guard(() => repo.getLoans(user.id, user.role ?? 'user'));
   }
 
   Future<void> extendLoan(String loanId, DateTime newDate) async {
     final repo = ref.read(loanRepositoryProvider);
-    await repo.extendLoan(loanId, newDate);
-    state = await AsyncValue.guard(() => repo.getLoans());
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    await repo.extendLoan(loanId, newDate, user.id);
+    state = await AsyncValue.guard(() => repo.getLoans(user.id, user.role ?? 'user'));
   }
 }
 
@@ -185,25 +195,33 @@ final loansProvider =
 class ReservationsNotifier extends AsyncNotifier<List<ReservationItem>> {
   @override
   Future<List<ReservationItem>> build() async {
-    return ref.watch(reservationRepositoryProvider).getReservations();
+    final user = ref.watch(authProvider).user;
+    if (user == null) return [];
+    return ref.watch(reservationRepositoryProvider).getReservations(user.id, user.role ?? 'user');
   }
 
   Future<void> addReservation(ReservationItem item) async {
     final repo = ref.read(reservationRepositoryProvider);
     await repo.createReservation(item);
-    state = await AsyncValue.guard(() => repo.getReservations());
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    state = await AsyncValue.guard(() => repo.getReservations(user.id, user.role ?? 'user'));
   }
 
   Future<void> updateReservation(ReservationItem item) async {
     final repo = ref.read(reservationRepositoryProvider);
     await repo.updateReservation(item);
-    state = await AsyncValue.guard(() => repo.getReservations());
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    state = await AsyncValue.guard(() => repo.getReservations(user.id, user.role ?? 'user'));
   }
 
   Future<void> deleteReservation(String id) async {
     final repo = ref.read(reservationRepositoryProvider);
     await repo.deleteReservation(id);
-    state = await AsyncValue.guard(() => repo.getReservations());
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    state = await AsyncValue.guard(() => repo.getReservations(user.id, user.role ?? 'user'));
   }
 }
 
