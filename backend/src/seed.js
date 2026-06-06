@@ -7,8 +7,8 @@ function formatReturnDate(d) {
 }
 
 function seed() {
-  const userCount = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
-  if (userCount === 0) {
+  const userExists = db.prepare("SELECT COUNT(*) AS c FROM users WHERE email = 'test@example.com'").get().c;
+  if (userExists === 0) {
     const hashed = bcrypt.hashSync('password123', 10);
     db.prepare(
       "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)"
@@ -16,8 +16,8 @@ function seed() {
     console.log('Seed user created: test@example.com / password123');
   }
 
-  const adminCount = db.prepare("SELECT COUNT(*) AS c FROM users WHERE role = 'admin'").get().c;
-  if (adminCount === 0) {
+  const adminExists = db.prepare("SELECT COUNT(*) AS c FROM users WHERE email = 'admin@sharenest.com'").get().c;
+  if (adminExists === 0) {
     const adminHashed = bcrypt.hashSync('admin123', 10);
     db.prepare(
       "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)"

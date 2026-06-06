@@ -26,9 +26,13 @@ class ResourceRepository {
       }
       return _local.getAll();
     } catch (_) {
-      final fallback = SeedData.resources();
-      await _local.insertAll(fallback);
-      return fallback;
+      final cached = await _local.getAll();
+      if (cached.isEmpty) {
+        final fallback = SeedData.resources();
+        await _local.insertAll(fallback);
+        return fallback;
+      }
+      return cached;
     }
   }
 

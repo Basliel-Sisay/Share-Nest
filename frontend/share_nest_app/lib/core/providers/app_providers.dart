@@ -126,12 +126,14 @@ class ResourcesNotifier extends AsyncNotifier<List<ResourceItem>> {
     final repo = ref.read(resourceRepositoryProvider);
     await repo.updateResource(item);
     state = await AsyncValue.guard(() => repo.getResources());
+    ref.invalidate(resourceByIdProvider(item.id));
   }
 
   Future<void> deleteResource(String id) async {
     final repo = ref.read(resourceRepositoryProvider);
     await repo.deleteResource(id);
     state = await AsyncValue.guard(() => repo.getResources());
+    ref.invalidate(resourceByIdProvider(id));
   }
 }
 

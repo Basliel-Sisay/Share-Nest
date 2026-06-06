@@ -7,18 +7,29 @@ void main(){
   testWidgets('Admin Actions: Add Resource and Verify', (tester) async{
     app.main();
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).at(0), 'admin@sharenest.com');
-    await tester.enterText(find.byType(TextField).at(1), 'admin123');
+    await tester.enterText(find.byType(TextFormField).at(0), 'admin@sharenest.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'admin123');
     await tester.tap(find.text('Login'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('ADD'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextFormField).at(0), 'New Admin Tool');
-    await tester.enterText(find.byType(TextFormField).at(1), 'A new tool added by admin');
+    await tester.enterText(find.byType(TextField).at(0), 'New Admin Tool');
+    await tester.enterText(find.byType(TextField).at(1), 'A new tool added by admin');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Add Resource'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Add Resource'));
+    await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
     await tester.tap(find.text('BROWSE'));
     await tester.pumpAndSettle();
-    expect(find.text('New Admin Tool'), findsOneWidget);
+    final itemFinder = find.text('New Admin Tool');
+    await tester.scrollUntilVisible(
+      itemFinder,
+      500.0,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(itemFinder, findsOneWidget);
   });
 }

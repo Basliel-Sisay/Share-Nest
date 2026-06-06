@@ -14,7 +14,7 @@ void main(){
     await tester.enterText(find.byType(TextFormField).at(2), 'password123');
     await tester.enterText(find.byType(TextFormField).at(3), 'password123');
     await tester.tap(find.byType(CheckboxListTile));
-    await tester.tap(find.text('Create Account'));
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Create Account'));
     await tester.pumpAndSettle();
     expect(find.text('ShareNest'), findsWidgets);
   });
