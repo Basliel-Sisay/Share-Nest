@@ -8,10 +8,19 @@ class ReservationLocalDataSource {
 
   final DatabaseHelper _db;
 
-  Future<List<ReservationItem>> getAll() async {
+  Future<List<ReservationItem>> getAll(String userId, String role) async {
     final database = await _db.database;
-    final rows = await database.query('reservations');
-    return rows.map(ReservationItem.fromMap).toList();
+    if (role == 'admin') {
+      final rows = await database.query('reservations');
+      return rows.map(ReservationItem.fromMap).toList();
+    } else {
+      final rows = await database.query(
+        'reservations',
+        where: 'borrower_id = ? OR owner_id = ?',
+        whereArgs: [userId, userId],
+      );
+      return rows.map(ReservationItem.fromMap).toList();
+    }
   }
 
   Future<void> insert(ReservationItem item) async {
