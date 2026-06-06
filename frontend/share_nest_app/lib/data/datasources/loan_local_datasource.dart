@@ -8,10 +8,19 @@ class LoanLocalDataSource {
 
   final DatabaseHelper _db;
 
-  Future<List<LoanItem>> getAll() async {
+  Future<List<LoanItem>> getAll(String userId, String role) async {
     final database = await _db.database;
-    final rows = await database.query('loans');
-    return rows.map(LoanItem.fromMap).toList();
+    if (role == 'admin') {
+      final rows = await database.query('loans');
+      return rows.map(LoanItem.fromMap).toList();
+    } else {
+      final rows = await database.query(
+        'loans',
+        where: 'borrower_id = ? OR owner_id = ?',
+        whereArgs: [userId, userId],
+      );
+      return rows.map(LoanItem.fromMap).toList();
+    }
   }
 
   Future<void> insertAll(List<LoanItem> items) async {
