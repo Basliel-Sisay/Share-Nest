@@ -9,7 +9,7 @@ import '../../../../core/providers/app_providers.dart';
 import '../../../../data/models/reservation_item.dart';
 import '../widgets/reservation_confirmation_modal.dart';
 
-class ReservationFormScreen extends ConsumerStatefulWidget {
+class ReservationFormScreen extends ConsumerStatefulWidget{
   const ReservationFormScreen({super.key});
 
   @override
@@ -17,7 +17,7 @@ class ReservationFormScreen extends ConsumerStatefulWidget {
       _ReservationFormScreenState();
 }
 
-class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
+class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen>{
   DateTime _pickupDate = DateTime.now().add(const Duration(days: 1));
   DateTime _returnDate = DateTime.now().add(const Duration(days: 2));
   TimeOfDay _pickupTime = const TimeOfDay(hour: 10, minute: 0);
@@ -51,23 +51,25 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
     setState(() {
       if (isPickup) {
         _pickupDate = picked;
-        if (!_returnDate.isAfter(_pickupDate)) {
+        if (!_returnDate.isAfter(_pickupDate)){
           _returnDate = _pickupDate.add(const Duration(days: 1));
         }
-      } else {
+      } 
+      else {
         _returnDate = picked;
       }
     });
   }
 
-  Future<void> _pickTime({required bool isPickup}) async {
+  Future<void> _pickTime({required bool isPickup}) async{
     final initial = isPickup ? _pickupTime : _returnTime;
     final picked = await showTimePicker(context: context, initialTime: initial);
     if (picked == null) return;
     setState(() {
       if (isPickup) {
         _pickupTime = picked;
-      } else {
+      } 
+      else {
         _returnTime = picked;
       }
     });
@@ -298,12 +300,23 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
                         );
                         return;
                       }
+                      
+                      // IMPROVED Simulation: Check if this item is already reserved on this day
+                      final existingReservations = ref.read(reservationsProvider).value ?? [];
+                      final hasRealConflict = existingReservations.any((r) => 
+                        r.resourceId == draft.resourceId && 
+                        r.pickupDate.year == _pickupDate.year &&
+                        r.pickupDate.month == _pickupDate.month &&
+                        r.pickupDate.day == _pickupDate.day
+                      );
+
                       showReservationModal(
                         context: context,
                         title: draft.resourceTitle,
                         imagePath: draft.imagePath,
                         date: DateFormat('dd/MM/yyyy').format(_pickupDate),
                         time: timeFormat.format(pickup),
+                        hasConflict: hasRealConflict,
                         onConfirm: () {
                           Navigator.pop(context);
                           _confirm();
