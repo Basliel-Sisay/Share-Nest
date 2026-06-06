@@ -78,6 +78,7 @@ class AuthNotifier extends Notifier<AuthState>{
     try {
       final repo = ref.read(authRepositoryProvider);
       await repo.deleteAccount();
+      await ref.read(databaseHelperProvider).clearAllData();
       state = const AuthState();
     } 
     catch (e) {
@@ -97,6 +98,7 @@ class AuthNotifier extends Notifier<AuthState>{
   Future<void> logout() async{
     final repo = ref.read(authRepositoryProvider);
     await repo.logout();
+    await ref.read(databaseHelperProvider).clearAllData();
     state = const AuthState();
   }
 
