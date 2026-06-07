@@ -30,7 +30,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 bool _isAuthRoute(String path) {
-  return path == '/landing' || path == '/login' || path == '/signup';
+  return path == '/landing' || path == '/login' || path == '/signup' || path == '/account-deleted';
 }
 
 class AuthListenable extends ChangeNotifier {

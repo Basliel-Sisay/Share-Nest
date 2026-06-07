@@ -153,7 +153,19 @@ class _AddResourceScreenState extends ConsumerState<AddResourceScreen> {
 
     if (!mounted) return;
     setState(() => _isSaving = false);
-    context.pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_editItem != null
+            ? 'Resource updated successfully'
+            : 'Resource added successfully'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    if (_editItem != null) {
+      context.pop();
+    } else {
+      context.go('/browse');
+    }
   }
 
   @override

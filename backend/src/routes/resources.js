@@ -64,8 +64,8 @@ router.post('/', authenticate, (req, res) => {
 router.put('/:id', authenticate, (req, res) => {
   const existing = db.prepare('SELECT * FROM resources WHERE id = ?').get(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Resource not found' });
-  if (existing.owner_id !== req.userId) {
-    return res.status(403).json({ error: 'Only the owner can edit this resource' });
+  if (existing.owner_id !== req.userId && req.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Only the owner or admin can edit this resource' });
   }
 
   const body = req.body;
@@ -99,8 +99,8 @@ router.put('/:id', authenticate, (req, res) => {
 router.delete('/:id', authenticate, (req, res) => {
   const existing = db.prepare('SELECT * FROM resources WHERE id = ?').get(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Resource not found' });
-  if (existing.owner_id !== req.userId) {
-    return res.status(403).json({ error: 'Only the owner can delete this resource' });
+  if (existing.owner_id !== req.userId && req.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Only the owner or admin can delete this resource' });
   }
 
   db.prepare('DELETE FROM loans WHERE resource_id = ?').run(req.params.id);

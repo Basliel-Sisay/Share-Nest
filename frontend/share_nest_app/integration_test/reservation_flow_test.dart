@@ -7,15 +7,25 @@ void main(){
   testWidgets('Reservation Flow: Search, Details, Request', (tester) async{
     app.main();
     await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).at(0), 'admin@sharenest.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'admin123');
+    await tester.tap(find.text('Login'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('BROWSE'));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).first, 'Drill');
     await tester.testTextInput.receiveAction(TextInputAction.search);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Drill').first);
+    await tester.tap(find.text('Power Drill').first);
     await tester.pumpAndSettle();
-    expect(find.text('Drill'), findsWidgets);
+    expect(find.text('Power Drill'), findsWidgets);
+    await tester.tap(find.text('Reserve Now'));
+    await tester.pumpAndSettle();
     expect(find.text('Confirm Reservation'), findsOneWidget);
     await tester.tap(find.text('Confirm Reservation'));
     await tester.pumpAndSettle();
-    expect(find.text('Confirm Reservation'), findsOneWidget); 
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Confirm Reservation').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Reservation Confirmed'), findsOneWidget);
   });
 }
