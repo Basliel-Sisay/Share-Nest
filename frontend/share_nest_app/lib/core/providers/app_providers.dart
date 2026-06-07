@@ -178,7 +178,7 @@ class LoansNotifier extends AsyncNotifier<List<LoanItem>> {
     final repo = ref.read(loanRepositoryProvider);
     final user = ref.read(authProvider).user;
     if (user == null) return;
-    await repo.updateLoanStatus(loanId, status, user.id);
+    await repo.updateLoanStatus(loanId, status, user.id, user.role ?? 'user');
     state = await AsyncValue.guard(() => repo.getLoans(user.id, user.role ?? 'user'));
   }
 
@@ -186,7 +186,7 @@ class LoansNotifier extends AsyncNotifier<List<LoanItem>> {
     final repo = ref.read(loanRepositoryProvider);
     final user = ref.read(authProvider).user;
     if (user == null) return;
-    await repo.extendLoan(loanId, newDate, user.id);
+    await repo.extendLoan(loanId, newDate, user.id, user.role ?? 'user');
     state = await AsyncValue.guard(() => repo.getLoans(user.id, user.role ?? 'user'));
   }
 }
