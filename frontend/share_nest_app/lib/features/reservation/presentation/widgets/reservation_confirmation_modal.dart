@@ -115,9 +115,7 @@ class ReservationConfirmationModal extends StatelessWidget {
                               fit: BoxFit.cover,
                             )
                           : const DecorationImage(
-                              image: NetworkImage(
-                                'https://images.unsplash.com/photo-1592417817098-8f3d6eb18865?q=80&w=600&auto=format&fit=crop',
-                              ),
+                              image: AssetImage('assets/images/wood_kit.jpg'),
                               fit: BoxFit.cover,
                             ),
                     ),

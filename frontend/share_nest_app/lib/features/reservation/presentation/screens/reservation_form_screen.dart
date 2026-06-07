@@ -300,8 +300,6 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen>{
                         );
                         return;
                       }
-                      
-                      // IMPROVED Simulation: Check if this item is already reserved on this day
                       final existingReservations = ref.read(reservationsProvider).value ?? [];
                       final hasRealConflict = existingReservations.any((r) => 
                         r.resourceId == draft.resourceId && 

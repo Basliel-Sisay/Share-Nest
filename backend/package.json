@@ -4,7 +4,7 @@
   "description": "ShareNest Node.js API with SQLite (Node built-in node:sqlite)",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node src/seed.js && node src/server.js",
     "dev": "node --watch src/server.js",
     "seed": "node src/seed.js",
     "test": "node --test --test-reporter tap test/*.test.js"

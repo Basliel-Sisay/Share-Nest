@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 import '../datasources/loan_local_datasource.dart';
 import '../datasources/loan_remote_datasource.dart';
+import '../datasources/seed_data.dart';
 import '../models/loan_item.dart';
 
 class LoanRepository {
@@ -22,13 +23,18 @@ class LoanRepository {
 
     try {
       final remote = await _remote.fetchAll();
+      // Filter remote for this user before inserting to local
       final userLoans = role == 'admin' 
           ? remote 
           : remote.where((l) => l.borrowerId == userId || l.ownerId == userId).toList();
       await _local.insertAll(userLoans);
       return userLoans;
     } catch (_) {
-      return [];
+      final fallback = SeedData.loans();
+      final userFallback = role == 'admin'
+          ? fallback
+          : fallback.where((l) => l.borrowerId == userId || l.ownerId == userId).toList();
+      return userFallback;
     }
   }
 
@@ -59,13 +65,13 @@ class LoanRepository {
     }
   }
 
-  Future<LoanItem> updateLoanStatus(String loanId, String status, String userId) async {
+  Future<LoanItem> updateLoanStatus(String loanId, String status, String userId, String role) async {
     try {
       final updated = await _remote.updateStatus(loanId, status);
       await _local.update(updated);
       return updated;
     } catch (_) {
-      final loans = await getLoans(userId, 'user');
+      final loans = await getLoans(userId, role);
       final loan = loans.firstWhere((l) => l.id == loanId);
       final updated = loan.copyWith(statusText: status);
       await _local.update(updated);
@@ -73,13 +79,13 @@ class LoanRepository {
     }
   }
 
-  Future<LoanItem> extendLoan(String loanId, DateTime newReturnDate, String userId) async {
+  Future<LoanItem> extendLoan(String loanId, DateTime newReturnDate, String userId, String role) async {
     try {
       final updated = await _remote.extendLoan(loanId, newReturnDate);
       await _local.update(updated);
       return updated;
     } catch (_) {
-      final loans = await getLoans(userId, 'user');
+      final loans = await getLoans(userId, role);
       final loan = loans.firstWhere((l) => l.id == loanId);
       final formatted = DateFormat('MMMM d, h:mm a').format(newReturnDate);
       final updated = loan.copyWith(

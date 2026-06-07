@@ -1,5 +1,6 @@
 import '../datasources/reservation_local_datasource.dart';
 import '../datasources/reservation_remote_datasource.dart';
+import '../datasources/seed_data.dart';
 import '../models/reservation_item.dart';
 
 class ReservationRepository {
@@ -20,11 +21,18 @@ class ReservationRepository {
 
     try {
       final remote = await _remote.fetchAll();
-      final userReservations = remote.where((r) => r.borrowerId == userId || r.ownerId == userId).toList();
+      // Filter remote for this user
+      final userReservations = role == 'admin'
+          ? remote
+          : remote.where((r) => r.borrowerId == userId || r.ownerId == userId).toList();
       await _local.insertAll(userReservations);
       return userReservations;
     } catch (_) {
-      return [];
+      final fallback = SeedData.reservations();
+      final userFallback = role == 'admin'
+          ? fallback
+          : fallback.where((r) => r.borrowerId == userId || r.ownerId == userId).toList();
+      return userFallback;
     }
   }
 

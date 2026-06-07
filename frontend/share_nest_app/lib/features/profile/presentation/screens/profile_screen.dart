@@ -49,12 +49,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey,
-                  backgroundImage: (user?.imagePath != null)
-                      ? (kIsWeb
-                          ? NetworkImage(user!.imagePath!)
-                          : File(user!.imagePath!).existsSync()
-                              ? FileImage(File(user.imagePath!))
-                              : null) as ImageProvider
+                  backgroundImage: (user?.imagePath != null && !kIsWeb)
+                      ? (File(user!.imagePath!).existsSync()
+                          ? FileImage(File(user.imagePath!))
+                          : null) as ImageProvider
                       : null,
                   child: (user?.imagePath == null ||
                           (!kIsWeb && !File(user!.imagePath!).existsSync()))
